@@ -1,0 +1,37 @@
+services:
+  tanzschule-db:
+    image: postgres:17-alpine
+    container_name: tanzschule-db
+    environment:
+      POSTGRES_DB: tanzschule
+      POSTGRES_USER: tanzschule
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tanzschule}
+    volumes:
+      - tanzschule-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - tanzschule-net
+    restart: unless-stopped
+
+  tanzschule-service:
+    build: .
+    container_name: tanzschule-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://tanzschule-db:5432/tanzschule
+      SPRING_DATASOURCE_USERNAME: tanzschule
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-tanzschule}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - tanzschule-db
+    networks:
+      - tanzschule-net
+    restart: unless-stopped
+
+volumes:
+  tanzschule-db-data:
+
+networks:
+  tanzschule-net:
+    name: tanzschule-net
