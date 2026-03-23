@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: tanzschule-family-and-friends-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tanzschule
+    username: tanzschule
+    password: tanzschule
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+security:
+  jwt:
+    secret: my-super-secret-jwt-key-that-should-be-changed-in-production-and-be-at-least-256-bits
+    expiration: 86400000
+
+admin:
+  default-username: admin
+  default-password: admin
