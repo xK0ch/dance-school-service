@@ -30,12 +30,12 @@ class FaqServiceTest {
 
     @BeforeEach
     void setUp() {
-        sampleFaq = new Faq("What are the opening hours?", "We are open from 9 to 21.");
+        sampleFaq = new Faq("What are the opening hours?", "We are open from 9 to 21.", 0);
     }
 
     @Test
     void findAll_returnsAllFaqs() {
-        when(faqRepository.findAll()).thenReturn(List.of(sampleFaq));
+        when(faqRepository.findAllByOrderByDisplayOrderAsc()).thenReturn(List.of(sampleFaq));
 
         List<Faq> result = faqService.findAll();
 
@@ -63,7 +63,7 @@ class FaqServiceTest {
 
     @Test
     void create_validRequest_savesFaq() {
-        FaqRequest request = new FaqRequest("New question?", "New answer.");
+        FaqRequest request = new FaqRequest("New question?", "New answer.", 0);
         when(faqRepository.save(any(Faq.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Faq result = faqService.create(request);
@@ -78,7 +78,7 @@ class FaqServiceTest {
         when(faqRepository.findById(1L)).thenReturn(Optional.of(sampleFaq));
         when(faqRepository.save(any(Faq.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        FaqRequest request = new FaqRequest("Updated question?", "Updated answer.");
+        FaqRequest request = new FaqRequest("Updated question?", "Updated answer.", 1);
         Faq result = faqService.update(1L, request);
 
         assertThat(result.getQuestion()).isEqualTo("Updated question?");

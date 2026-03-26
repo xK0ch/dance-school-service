@@ -19,9 +19,9 @@ spring:
 
 security:
   jwt:
-    secret: my-super-secret-jwt-key-that-should-be-changed-in-production-and-be-at-least-256-bits
-    expiration: 86400000
+    secret: ${JWT_SECRET:my-super-secret-jwt-key-that-should-be-changed-in-production-and-be-at-least-256-bits}
+    expiration: ${JWT_EXPIRATION:86400000}
 
 admin:
-  default-username: admin
-  default-password: admin
+  default-username: ${ADMIN_USERNAME:admin}
+  default-password: ${ADMIN_PASSWORD:admin}

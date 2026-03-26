@@ -16,11 +16,14 @@ services:
 
   tanzschule-service:
     build: .
-    container_name: tanzschule-backend
+    container_name: tanzschule-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://tanzschule-db:5432/tanzschule
       SPRING_DATASOURCE_USERNAME: tanzschule
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-tanzschule}
+      JWT_SECRET: ${JWT_SECRET:-my-super-secret-jwt-key-that-should-be-changed-in-production-and-be-at-least-256-bits}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
     ports:
       - "8080:8080"
     depends_on:

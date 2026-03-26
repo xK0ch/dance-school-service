@@ -6,6 +6,7 @@ public record FaqResponse(
         Long id,
         String question,
         String answer,
+        int displayOrder,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -15,6 +16,7 @@ public record FaqResponse(
                 faq.getId(),
                 faq.getQuestion(),
                 faq.getAnswer(),
+                faq.getDisplayOrder(),
                 faq.getCreatedAt(),
                 faq.getUpdatedAt()
         );

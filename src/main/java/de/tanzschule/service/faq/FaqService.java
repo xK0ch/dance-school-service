@@ -16,7 +16,7 @@ public class FaqService {
     }
 
     public List<Faq> findAll() {
-        return faqRepository.findAll();
+        return faqRepository.findAllByOrderByDisplayOrderAsc();
     }
 
     public Faq findById(Long id) {
@@ -26,7 +26,7 @@ public class FaqService {
 
     @Transactional
     public Faq create(FaqRequest request) {
-        Faq faq = new Faq(request.question(), request.answer());
+        Faq faq = new Faq(request.question(), request.answer(), request.displayOrder());
         return faqRepository.save(faq);
     }
 
@@ -35,6 +35,7 @@ public class FaqService {
         Faq faq = findById(id);
         faq.setQuestion(request.question());
         faq.setAnswer(request.answer());
+        faq.setDisplayOrder(request.displayOrder());
         faq.setUpdatedAt(LocalDateTime.now());
         return faqRepository.save(faq);
     }
@@ -43,5 +44,20 @@ public class FaqService {
     public void delete(Long id) {
         Faq faq = findById(id);
         faqRepository.delete(faq);
+    }
+
+    @Transactional
+    public List<Faq> reorder(List<Long> orderedIds) {
+        List<Faq> faqs = faqRepository.findAllById(orderedIds);
+        for (int i = 0; i < orderedIds.size(); i++) {
+            Long faqId = orderedIds.get(i);
+            Faq faq = faqs.stream()
+                    .filter(f -> f.getId().equals(faqId))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("FAQ with id " + faqId + " not found"));
+            faq.setDisplayOrder(i);
+            faq.setUpdatedAt(LocalDateTime.now());
+        }
+        return faqRepository.saveAll(faqs);
     }
 }

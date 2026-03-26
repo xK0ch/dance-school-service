@@ -52,4 +52,11 @@ public class FaqController {
         faqService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/reorder")
+    public List<FaqResponse> reorder(@RequestBody List<Long> orderedIds) {
+        return faqService.reorder(orderedIds).stream()
+                .map(FaqResponse::from)
+                .toList();
+    }
 }

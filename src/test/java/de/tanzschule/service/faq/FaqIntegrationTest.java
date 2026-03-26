@@ -49,7 +49,7 @@ class FaqIntegrationTest {
     @Test
     void fullCrudLifecycle() throws Exception {
         // Create
-        FaqRequest createRequest = new FaqRequest("What courses do you offer?", "We offer salsa, bachata, and more.");
+        FaqRequest createRequest = new FaqRequest("What courses do you offer?", "We offer salsa, bachata, and more.", 0);
 
         String createResponse = mockMvc.perform(post("/api/faqs")
                         .header("Authorization", "Bearer " + adminToken)
@@ -74,7 +74,7 @@ class FaqIntegrationTest {
                 .andExpect(jsonPath("$.answer").value("We offer salsa, bachata, and more."));
 
         // Update
-        FaqRequest updateRequest = new FaqRequest("What courses are available?", "Salsa, bachata, kizomba, and more.");
+        FaqRequest updateRequest = new FaqRequest("What courses are available?", "Salsa, bachata, kizomba, and more.", 0);
 
         mockMvc.perform(put("/api/faqs/" + id)
                         .header("Authorization", "Bearer " + adminToken)
@@ -95,7 +95,7 @@ class FaqIntegrationTest {
 
     @Test
     void createWithoutAuth_returns401() throws Exception {
-        FaqRequest request = new FaqRequest("Question?", "Answer.");
+        FaqRequest request = new FaqRequest("Question?", "Answer.", 0);
 
         mockMvc.perform(post("/api/faqs")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -105,8 +105,8 @@ class FaqIntegrationTest {
 
     @Test
     void getAll_public_returns200() throws Exception {
-        faqRepository.save(new Faq("Q1?", "A1."));
-        faqRepository.save(new Faq("Q2?", "A2."));
+        faqRepository.save(new Faq("Q1?", "A1.", 0));
+        faqRepository.save(new Faq("Q2?", "A2.", 1));
 
         mockMvc.perform(get("/api/faqs"))
                 .andExpect(status().isOk())

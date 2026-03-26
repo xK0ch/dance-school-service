@@ -22,6 +22,9 @@ public class Faq {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String answer;
 
+    @Column(name = "display_order", nullable = false)
+    private int displayOrder;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -31,9 +34,10 @@ public class Faq {
     protected Faq() {
     }
 
-    public Faq(String question, String answer) {
+    public Faq(String question, String answer, int displayOrder) {
         this.question = question;
         this.answer = answer;
+        this.displayOrder = displayOrder;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -56,6 +60,14 @@ public class Faq {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public LocalDateTime getCreatedAt() {

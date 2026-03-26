@@ -37,7 +37,7 @@ class FaqControllerTest {
 
     @Test
     void getAll_returnsListOfFaqs() throws Exception {
-        Faq faq = new Faq("Question?", "Answer.");
+        Faq faq = new Faq("Question?", "Answer.", 0);
         when(faqService.findAll()).thenReturn(List.of(faq));
 
         mockMvc.perform(get("/api/faqs"))
@@ -48,7 +48,7 @@ class FaqControllerTest {
 
     @Test
     void getById_existingId_returnsFaq() throws Exception {
-        Faq faq = new Faq("Question?", "Answer.");
+        Faq faq = new Faq("Question?", "Answer.", 0);
         when(faqService.findById(1L)).thenReturn(faq);
 
         mockMvc.perform(get("/api/faqs/1"))
@@ -67,7 +67,7 @@ class FaqControllerTest {
     @Test
     @WithMockUser
     void create_authenticated_returns201() throws Exception {
-        FaqRequest request = new FaqRequest("New?", "Yes.");
+        FaqRequest request = new FaqRequest("New?", "Yes.", 0);
         Faq created = new Faq("New?", "Yes.");
         when(faqService.create(any(FaqRequest.class))).thenReturn(created);
 
@@ -80,7 +80,7 @@ class FaqControllerTest {
 
     @Test
     void create_unauthenticated_returns401() throws Exception {
-        FaqRequest request = new FaqRequest("New?", "Yes.");
+        FaqRequest request = new FaqRequest("New?", "Yes.", 0);
 
         mockMvc.perform(post("/api/faqs")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -91,8 +91,8 @@ class FaqControllerTest {
     @Test
     @WithMockUser
     void update_authenticated_returns200() throws Exception {
-        FaqRequest request = new FaqRequest("Updated?", "Updated.");
-        Faq updated = new Faq("Updated?", "Updated.");
+        FaqRequest request = new FaqRequest("Updated?", "Updated.", 1);
+        Faq updated = new Faq("Updated?", "Updated.", 1);
         when(faqService.update(eq(1L), any(FaqRequest.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/faqs/1")
@@ -114,7 +114,7 @@ class FaqControllerTest {
     @Test
     @WithMockUser
     void create_invalidRequest_returns400() throws Exception {
-        FaqRequest request = new FaqRequest("", "");
+        FaqRequest request = new FaqRequest("", "", 0);
 
         mockMvc.perform(post("/api/faqs")
                         .contentType(MediaType.APPLICATION_JSON)
