@@ -29,6 +29,7 @@ dependencies {
 
     implementation "org.flywaydb:flyway-core:${flywayVersion}"
     implementation "org.flywaydb:flyway-database-postgresql:${flywayVersion}"
+    implementation 'org.springframework.boot:spring-boot-flyway-autoconfigure'
 
     implementation "io.jsonwebtoken:jjwt-api:${jsonwebtokenVersion}"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${jsonwebtokenVersion}"
