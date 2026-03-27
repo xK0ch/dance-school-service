@@ -24,6 +24,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-my-super-secret-jwt-key-that-should-be-changed-in-production-and-be-at-least-256-bits}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
+      CORS_ALLOWED_ORIGINS: https://fynn-koch.de,http://localhost:4200
     ports:
       - "8080:8080"
     depends_on:

@@ -25,3 +25,6 @@ security:
 admin:
   default-username: ${ADMIN_USERNAME:admin}
   default-password: ${ADMIN_PASSWORD:admin}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
