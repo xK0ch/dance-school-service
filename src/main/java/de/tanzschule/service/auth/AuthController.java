@@ -1,5 +1,8 @@
 package de.tanzschule.service.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "Admin login and JWT token generation")
 public class AuthController {
 
     private final AdminUserRepository adminUserRepository;
@@ -26,6 +30,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login", description = "Authenticate with username and password to receive a JWT token")
+    @SecurityRequirements
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         AdminUser user = adminUserRepository.findByUsername(request.username())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));

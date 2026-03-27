@@ -28,3 +28,11 @@ admin:
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+  api-docs:
+    path: /v3/api-docs
