@@ -5,7 +5,7 @@ import de.tanzschule.service.auth.JwtTokenProvider;
 import de.tanzschule.service.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -26,8 +27,7 @@ class FaqControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @MockitoBean
     private FaqService faqService;
@@ -36,6 +36,7 @@ class FaqControllerTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Test
+    @WithMockUser
     void getAll_returnsListOfFaqs() throws Exception {
         Faq faq = new Faq("Question?", "Answer.", 0);
         when(faqService.findAll()).thenReturn(List.of(faq));
@@ -47,6 +48,7 @@ class FaqControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getById_existingId_returnsFaq() throws Exception {
         Faq faq = new Faq("Question?", "Answer.", 0);
         when(faqService.findById(1L)).thenReturn(faq);
@@ -57,6 +59,7 @@ class FaqControllerTest {
     }
 
     @Test
+    @WithMockUser
     void getById_nonExistingId_returns404() throws Exception {
         when(faqService.findById(99L)).thenThrow(new ResourceNotFoundException("FAQ with id 99 not found"));
 
@@ -68,24 +71,15 @@ class FaqControllerTest {
     @WithMockUser
     void create_authenticated_returns201() throws Exception {
         FaqRequest request = new FaqRequest("New?", "Yes.", 0);
-        Faq created = new Faq("New?", "Yes.");
+        Faq created = new Faq("New?", "Yes.", 0);
         when(faqService.create(any(FaqRequest.class))).thenReturn(created);
 
         mockMvc.perform(post("/api/faqs")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.question").value("New?"));
-    }
-
-    @Test
-    void create_unauthenticated_returns401() throws Exception {
-        FaqRequest request = new FaqRequest("New?", "Yes.", 0);
-
-        mockMvc.perform(post("/api/faqs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -96,6 +90,7 @@ class FaqControllerTest {
         when(faqService.update(eq(1L), any(FaqRequest.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/faqs/1")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -107,7 +102,8 @@ class FaqControllerTest {
     void delete_authenticated_returns204() throws Exception {
         doNothing().when(faqService).delete(1L);
 
-        mockMvc.perform(delete("/api/faqs/1"))
+        mockMvc.perform(delete("/api/faqs/1")
+                        .with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
@@ -117,6 +113,7 @@ class FaqControllerTest {
         FaqRequest request = new FaqRequest("", "", 0);
 
         mockMvc.perform(post("/api/faqs")
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());

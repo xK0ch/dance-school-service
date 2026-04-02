@@ -1,6 +1,14 @@
 pipeline {
   agent any
 
+  environment {
+    DB_PASSWORD = credentials('TANZSCHULE_DB_PASSWORD')
+    JWT_SECRET = credentials('TANZSCHULE_JWT_SECRET')
+    ADMIN_USERNAME = credentials('TANZSCHULE_ADMIN_USERNAME')
+    ADMIN_PASSWORD = credentials('TANZSCHULE_ADMIN_PASSWORD')
+    GALLERY_UPLOAD_DIR = '/srv/tanzschule/uploads/images'
+  }
+
   stages {
     stage('Deploy') {
       steps {

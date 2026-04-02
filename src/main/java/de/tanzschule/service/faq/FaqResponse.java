@@ -1,5 +1,6 @@
 package de.tanzschule.service.faq;
 
+import de.tanzschule.service.common.BaseResponse;
 import java.time.LocalDateTime;
 
 public record FaqResponse(
@@ -9,7 +10,7 @@ public record FaqResponse(
         int displayOrder,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
-) {
+) implements BaseResponse {
 
     public static FaqResponse from(Faq faq) {
         return new FaqResponse(

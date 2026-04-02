@@ -26,6 +26,9 @@ admin:
   default-username: ${ADMIN_USERNAME:admin}
   default-password: ${ADMIN_PASSWORD:admin}
 
+gallery:
+  upload-dir: ${GALLERY_UPLOAD_DIR:./uploads/gallery}
+
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
 

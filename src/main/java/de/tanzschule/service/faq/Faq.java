@@ -1,20 +1,13 @@
 package de.tanzschule.service.faq;
 
+import de.tanzschule.service.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "faq")
-public class Faq {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Faq extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String question;
@@ -25,25 +18,14 @@ public class Faq {
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     protected Faq() {
     }
 
     public Faq(String question, String answer, int displayOrder) {
+        super();
         this.question = question;
         this.answer = answer;
         this.displayOrder = displayOrder;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getQuestion() {
@@ -68,17 +50,5 @@ public class Faq {
 
     public void setDisplayOrder(int displayOrder) {
         this.displayOrder = displayOrder;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }
