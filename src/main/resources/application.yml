@@ -19,12 +19,12 @@ spring:
 
   mail:
     host: ${MAIL_HOST:smtp.example.com}
-    port: ${MAIL_PORT:587}
+    port: ${MAIL_PORT:465}
     username: ${MAIL_USERNAME:noreply@example.com}
     password: ${MAIL_PASSWORD:changeme}
     properties:
       mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
+      mail.smtp.ssl.enable: true
 
 security:
   jwt:
