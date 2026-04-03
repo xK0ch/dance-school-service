@@ -155,6 +155,24 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 [3, 1, 2]
 ```
 
+### Contact
+
+| Method | Endpoint        | Auth   | Description                          |
+|--------|-----------------|--------|--------------------------------------|
+| POST   | `/api/contact`  | Public | Send a contact form message via email |
+
+**Contact Request:**
+```json
+{
+  "name": "Max Mustermann",
+  "email": "max@example.com",
+  "phone": "(optional) 0123 456789",
+  "message": "I have a question about your courses."
+}
+```
+
+Returns `200 OK` on success, `400 Bad Request` on validation errors, `503 Service Unavailable` if mail delivery fails.
+
 Authenticated endpoints require a `Bearer` token in the `Authorization` header:
 ```
 Authorization: Bearer eyJhbGciOi...
@@ -176,6 +194,10 @@ pipeline {
     ADMIN_USERNAME = credentials('TANZSCHULE_ADMIN_USERNAME')
     ADMIN_PASSWORD = credentials('TANZSCHULE_ADMIN_PASSWORD')
     GALLERY_UPLOAD_DIR = '/srv/tanzschule/uploads/images'
+    MAIL_HOST = credentials('TANZSCHULE_MAIL_HOST')
+    MAIL_PORT = credentials('TANZSCHULE_MAIL_PORT')
+    MAIL_USERNAME = credentials('TANZSCHULE_MAIL_USERNAME')
+    MAIL_PASSWORD = credentials('TANZSCHULE_MAIL_PASSWORD')
   }
 
   stages {
@@ -200,6 +222,10 @@ Under **Manage Jenkins > Credentials > Global**, create the following credential
 | `TANZSCHULE_JWT_SECRET`          | JWT signing secret (min. 32 characters)   | `a3f8b2...` (long random string)       |
 | `TANZSCHULE_ADMIN_USERNAME`      | Admin username                            | `admin`                                |
 | `TANZSCHULE_ADMIN_PASSWORD`      | Admin password                            | `my-secure-admin-password`             |
+| `TANZSCHULE_MAIL_HOST`           | SMTP server hostname                      | `smtp.example.com`                     |
+| `TANZSCHULE_MAIL_PORT`           | SMTP server port                          | `587`                                  |
+| `TANZSCHULE_MAIL_USERNAME`       | SMTP username / sender address            | `noreply@tsfaf.de`                     |
+| `TANZSCHULE_MAIL_PASSWORD`       | SMTP password                             | `my-mail-password`                     |
 
 `GALLERY_UPLOAD_DIR` is set directly in the Jenkinsfile as it is not a secret.
 
@@ -217,6 +243,11 @@ Configuration is done via `application.yml` and can be overridden with environme
 | `ADMIN_USERNAME`             | `admin`                    | Default admin username               |
 | `ADMIN_PASSWORD`             | `admin`                    | Default admin password               |
 | `GALLERY_UPLOAD_DIR`         | `./uploads/gallery`        | Directory for uploaded image files   |
+| `MAIL_HOST`                  | `smtp.example.com`         | SMTP server hostname                 |
+| `MAIL_PORT`                  | `587`                      | SMTP server port                     |
+| `MAIL_USERNAME`              | `noreply@example.com`      | SMTP username / sender address       |
+| `MAIL_PASSWORD`              | `changeme`                 | SMTP password                        |
+| `CONTACT_RECIPIENT`          | `info@tsfaf.de`            | Email address that receives contact messages |
 | `CORS_ALLOWED_ORIGINS`      | `http://localhost:4200`    | Allowed CORS origins                 |
 
 ## Project Structure
@@ -257,6 +288,10 @@ src/main/java/de/tanzschule/service/
 │   ├── ImageRepository.java
 │   ├── ImageService.java
 │   └── ImageResponse.java
+├── contact/
+│   ├── ContactRequest.java
+│   ├── ContactService.java
+│   └── ContactController.java
 └── exception/
     ├── ResourceNotFoundException.java
     └── GlobalExceptionHandler.java

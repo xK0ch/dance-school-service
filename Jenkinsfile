@@ -7,6 +7,10 @@ pipeline {
     ADMIN_USERNAME = credentials('TANZSCHULE_ADMIN_USERNAME')
     ADMIN_PASSWORD = credentials('TANZSCHULE_ADMIN_PASSWORD')
     GALLERY_UPLOAD_DIR = '/srv/tanzschule/uploads/images'
+    MAIL_HOST = credentials('TANZSCHULE_MAIL_HOST')
+    MAIL_PORT = credentials('TANZSCHULE_MAIL_PORT')
+    MAIL_USERNAME = credentials('TANZSCHULE_MAIL_USERNAME')
+    MAIL_PASSWORD = credentials('TANZSCHULE_MAIL_PASSWORD')
   }
 
   stages {
