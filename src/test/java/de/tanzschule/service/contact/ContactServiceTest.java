@@ -22,7 +22,7 @@ class ContactServiceTest {
 
     @BeforeEach
     void setUp() {
-        contactService = new ContactService(mailSender, "info@tsfaf.de", "noreply@tsfaf.de");
+        contactService = new ContactService(mailSender, "mail@fynn-koch.de", "noreply@tsfaf.de");
     }
 
     @Test
@@ -36,7 +36,7 @@ class ContactServiceTest {
 
         SimpleMailMessage sent = captor.getValue();
         assertThat(sent.getFrom()).isEqualTo("noreply@tsfaf.de");
-        assertThat(sent.getTo()).containsExactly("info@tsfaf.de");
+        assertThat(sent.getTo()).containsExactly("mail@fynn-koch.de");
         assertThat(sent.getReplyTo()).isEqualTo("max@example.com");
         assertThat(sent.getSubject()).isEqualTo("Kontaktanfrage von Max Mustermann");
         assertThat(sent.getText()).contains("Max Mustermann");

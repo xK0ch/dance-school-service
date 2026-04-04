@@ -233,22 +233,22 @@ Under **Manage Jenkins > Credentials > Global**, create the following credential
 
 Configuration is done via `application.yml` and can be overridden with environment variables:
 
-| Environment Variable         | Default                    | Description                          |
-|------------------------------|----------------------------|--------------------------------------|
+| Environment Variable         | Default                                       | Description                          |
+|------------------------------|-----------------------------------------------|--------------------------------------|
 | `SPRING_DATASOURCE_URL`     | `jdbc:postgresql://localhost:5432/tanzschule` | Database URL          |
-| `SPRING_DATASOURCE_USERNAME`| `tanzschule`               | Database user                        |
-| `SPRING_DATASOURCE_PASSWORD`| `tanzschule`               | Database password                    |
-| `JWT_SECRET`                 | *(dev default)*            | JWT signing secret (min. 256 bits)   |
-| `JWT_EXPIRATION`             | `86400000`                 | Token expiration in ms (default: 24h)|
-| `ADMIN_USERNAME`             | `admin`                    | Default admin username               |
-| `ADMIN_PASSWORD`             | `admin`                    | Default admin password               |
-| `GALLERY_UPLOAD_DIR`         | `./uploads/gallery`        | Directory for uploaded image files   |
-| `MAIL_HOST`                  | `smtp.example.com`         | SMTP server hostname                 |
-| `MAIL_PORT`                  | `587`                      | SMTP server port                     |
-| `MAIL_USERNAME`              | `noreply@example.com`      | SMTP username / sender address       |
-| `MAIL_PASSWORD`              | `changeme`                 | SMTP password                        |
-| `CONTACT_RECIPIENT`          | `info@tsfaf.de`            | Email address that receives contact messages |
-| `CORS_ALLOWED_ORIGINS`      | `http://localhost:4200`    | Allowed CORS origins                 |
+| `SPRING_DATASOURCE_USERNAME`| `tanzschule`                                  | Database user                        |
+| `SPRING_DATASOURCE_PASSWORD`| `tanzschule`                                  | Database password                    |
+| `JWT_SECRET`                 | *(dev default)*                               | JWT signing secret (min. 256 bits)   |
+| `JWT_EXPIRATION`             | `86400000`                                    | Token expiration in ms (default: 24h)|
+| `ADMIN_USERNAME`             | `admin`                                       | Default admin username               |
+| `ADMIN_PASSWORD`             | `admin`                                       | Default admin password               |
+| `GALLERY_UPLOAD_DIR`         | `./uploads/gallery`                           | Directory for uploaded image files   |
+| `MAIL_HOST`                  | `smtp.example.com`                            | SMTP server hostname                 |
+| `MAIL_PORT`                  | `587`                                         | SMTP server port                     |
+| `MAIL_USERNAME`              | `noreply@example.com`                         | SMTP username / sender address       |
+| `MAIL_PASSWORD`              | `changeme`                                    | SMTP password                        |
+| `CONTACT_RECIPIENT`          | `mail@fynn-koch.de`                           | Email address that receives contact messages |
+| `CORS_ALLOWED_ORIGINS`      | `http://localhost:4200`                       | Allowed CORS origins                 |
 
 ## Project Structure
 
