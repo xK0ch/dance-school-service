@@ -31,30 +31,27 @@ public class CourseCategoryController {
     @Operation(summary = "Get all course categories", description = "Returns all course categories with their courses, sorted by display order")
     @SecurityRequirements
     public List<CourseCategoryResponse> getAll() {
-        return courseCategoryService.findAll().stream()
-                .map(CourseCategoryResponse::from)
-                .toList();
+        return courseCategoryService.findAll();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get course category by ID", description = "Returns a single course category with its courses")
     @SecurityRequirements
     public CourseCategoryResponse getById(@PathVariable Long id) {
-        return CourseCategoryResponse.from(courseCategoryService.findById(id));
+        return courseCategoryService.findById(id);
     }
 
     @PostMapping
     @Operation(summary = "Create course category", description = "Create a new course category (requires authentication)")
     public ResponseEntity<CourseCategoryResponse> create(@Valid @RequestBody CourseCategoryRequest request) {
-        CourseCategory created = courseCategoryService.create(request);
-        CourseCategoryResponse response = CourseCategoryResponse.from(created);
-        return ResponseEntity.created(URI.create("/api/course-categories/" + created.getId())).body(response);
+        CourseCategoryResponse response = courseCategoryService.create(request);
+        return ResponseEntity.created(URI.create("/api/course-categories/" + response.id())).body(response);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update course category", description = "Update an existing course category (requires authentication)")
     public CourseCategoryResponse update(@PathVariable Long id, @Valid @RequestBody CourseCategoryRequest request) {
-        return CourseCategoryResponse.from(courseCategoryService.update(id, request));
+        return courseCategoryService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
@@ -67,8 +64,6 @@ public class CourseCategoryController {
     @PutMapping("/reorder")
     @Operation(summary = "Reorder course categories", description = "Reorder categories by providing a list of IDs in the desired order (requires authentication)")
     public List<CourseCategoryResponse> reorder(@RequestBody List<Long> orderedIds) {
-        return courseCategoryService.reorder(orderedIds).stream()
-                .map(CourseCategoryResponse::from)
-                .toList();
+        return courseCategoryService.reorder(orderedIds);
     }
 }

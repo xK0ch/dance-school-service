@@ -30,21 +30,20 @@ public class CourseController {
     @Operation(summary = "Get course by ID", description = "Returns a single course with its tariffs")
     @SecurityRequirements
     public CourseResponse getById(@PathVariable Long id) {
-        return CourseResponse.from(courseService.findById(id));
+        return courseService.findById(id);
     }
 
     @PostMapping
     @Operation(summary = "Create course", description = "Create a new course with tariffs (requires authentication)")
     public ResponseEntity<CourseResponse> create(@Valid @RequestBody CourseRequest request) {
-        Course created = courseService.create(request);
-        CourseResponse response = CourseResponse.from(created);
-        return ResponseEntity.created(URI.create("/api/courses/" + created.getId())).body(response);
+        CourseResponse response = courseService.create(request);
+        return ResponseEntity.created(URI.create("/api/courses/" + response.id())).body(response);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update course", description = "Update an existing course and its tariffs (requires authentication)")
     public CourseResponse update(@PathVariable Long id, @Valid @RequestBody CourseRequest request) {
-        return CourseResponse.from(courseService.update(id, request));
+        return courseService.update(id, request);
     }
 
     @DeleteMapping("/{id}")

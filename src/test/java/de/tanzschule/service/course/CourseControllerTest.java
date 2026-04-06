@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -40,32 +41,28 @@ class CourseControllerTest {
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
-    private CourseCategory sampleCategory;
-    private Course sampleCourse;
+    private CourseResponse sampleResponse;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        sampleCategory = new CourseCategory("Erwachsene", 0);
-        sampleCourse = new Course(
-                "Welttanzprogramm Teil 1",
+        sampleResponse = new CourseResponse(
+                1L, "Welttanzprogramm Teil 1",
                 LocalDate.of(2026, 5, 1),
                 LocalTime.of(19, 45),
                 LocalTime.of(21, 30),
-                "8 Doppelstunden",
-                "Uwe Höftmann",
-                null,
-                true,
-                sampleCategory
+                "8 Doppelstunden", "Uwe Höftmann", null, true, 1L,
+                List.of(),
+                LocalDateTime.now(), LocalDateTime.now()
         );
     }
 
     @Test
     @WithMockUser
     void getById_existingId_returnsCourse() throws Exception {
-        when(courseService.findById(1L)).thenReturn(sampleCourse);
+        when(courseService.findById(1L)).thenReturn(sampleResponse);
 
         mockMvc.perform(get("/api/courses/1"))
                 .andExpect(status().isOk())
@@ -92,7 +89,7 @@ class CourseControllerTest {
                 "4 Stunden", "Tabea Höftmann", null, false, 1L,
                 List.of(new CourseTariffRequest("Normal", new BigDecimal("78.00")))
         );
-        when(courseService.create(any(CourseRequest.class))).thenReturn(sampleCourse);
+        when(courseService.create(any(CourseRequest.class))).thenReturn(sampleResponse);
 
         mockMvc.perform(post("/api/courses")
                         .with(csrf())
@@ -110,7 +107,7 @@ class CourseControllerTest {
                 LocalTime.of(18, 0), LocalTime.of(19, 30),
                 "6 Doppelstunden", "Uwe Höftmann", "Remark", true, 1L, List.of()
         );
-        when(courseService.update(eq(1L), any(CourseRequest.class))).thenReturn(sampleCourse);
+        when(courseService.update(eq(1L), any(CourseRequest.class))).thenReturn(sampleResponse);
 
         mockMvc.perform(put("/api/courses/1")
                         .with(csrf())

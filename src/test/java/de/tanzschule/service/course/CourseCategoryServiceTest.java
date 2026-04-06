@@ -37,19 +37,19 @@ class CourseCategoryServiceTest {
     void findAll_returnsAllCategories() {
         when(courseCategoryRepository.findAllByOrderByDisplayOrderAsc()).thenReturn(List.of(sampleCategory));
 
-        List<CourseCategory> result = courseCategoryService.findAll();
+        List<CourseCategoryResponse> result = courseCategoryService.findAll();
 
         assertThat(result).hasSize(1);
-        assertThat(result.getFirst().getName()).isEqualTo("Erwachsene");
+        assertThat(result.getFirst().name()).isEqualTo("Erwachsene");
     }
 
     @Test
     void findById_existingId_returnsCategory() {
         when(courseCategoryRepository.findWithCoursesById(1L)).thenReturn(Optional.of(sampleCategory));
 
-        CourseCategory result = courseCategoryService.findById(1L);
+        CourseCategoryResponse result = courseCategoryService.findById(1L);
 
-        assertThat(result.getName()).isEqualTo("Erwachsene");
+        assertThat(result.name()).isEqualTo("Erwachsene");
     }
 
     @Test
@@ -66,10 +66,10 @@ class CourseCategoryServiceTest {
         CourseCategoryRequest request = new CourseCategoryRequest("Jugendliche", 1);
         when(courseCategoryRepository.save(any(CourseCategory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        CourseCategory result = courseCategoryService.create(request);
+        CourseCategoryResponse result = courseCategoryService.create(request);
 
-        assertThat(result.getName()).isEqualTo("Jugendliche");
-        assertThat(result.getDisplayOrder()).isEqualTo(1);
+        assertThat(result.name()).isEqualTo("Jugendliche");
+        assertThat(result.displayOrder()).isEqualTo(1);
         verify(courseCategoryRepository).save(any(CourseCategory.class));
     }
 
@@ -79,10 +79,10 @@ class CourseCategoryServiceTest {
         when(courseCategoryRepository.save(any(CourseCategory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         CourseCategoryRequest request = new CourseCategoryRequest("Senioren", 2);
-        CourseCategory result = courseCategoryService.update(1L, request);
+        CourseCategoryResponse result = courseCategoryService.update(1L, request);
 
-        assertThat(result.getName()).isEqualTo("Senioren");
-        assertThat(result.getDisplayOrder()).isEqualTo(2);
+        assertThat(result.name()).isEqualTo("Senioren");
+        assertThat(result.displayOrder()).isEqualTo(2);
     }
 
     @Test

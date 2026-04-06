@@ -21,13 +21,15 @@ public class CourseService {
         this.courseTariffRepository = courseTariffRepository;
     }
 
-    public Course findById(Long id) {
-        return courseRepository.findWithTariffsById(id)
+    @Transactional(readOnly = true)
+    public CourseResponse findById(Long id) {
+        Course course = courseRepository.findWithTariffsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course with id " + id + " not found"));
+        return CourseResponse.from(course);
     }
 
     @Transactional
-    public Course create(CourseRequest request) {
+    public CourseResponse create(CourseRequest request) {
         CourseCategory category = courseCategoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + request.categoryId() + " not found"));
 
@@ -51,12 +53,14 @@ public class CourseService {
             }
         }
 
-        return courseRepository.findWithTariffsById(course.getId()).orElseThrow();
+        Course saved = courseRepository.findWithTariffsById(course.getId()).orElseThrow();
+        return CourseResponse.from(saved);
     }
 
     @Transactional
-    public Course update(Long id, CourseRequest request) {
-        Course course = findById(id);
+    public CourseResponse update(Long id, CourseRequest request) {
+        Course course = courseRepository.findWithTariffsById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course with id " + id + " not found"));
 
         CourseCategory category = courseCategoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + request.categoryId() + " not found"));
@@ -81,12 +85,14 @@ public class CourseService {
             }
         }
 
-        return courseRepository.findWithTariffsById(course.getId()).orElseThrow();
+        Course saved = courseRepository.findWithTariffsById(course.getId()).orElseThrow();
+        return CourseResponse.from(saved);
     }
 
     @Transactional
     public void delete(Long id) {
-        Course course = findById(id);
+        Course course = courseRepository.findWithTariffsById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course with id " + id + " not found"));
         courseTariffRepository.deleteAllByCourseId(id);
         courseRepository.delete(course);
     }

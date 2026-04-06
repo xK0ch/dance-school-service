@@ -58,9 +58,9 @@ class CourseServiceTest {
     void findById_existingId_returnsCourse() {
         when(courseRepository.findWithTariffsById(1L)).thenReturn(Optional.of(sampleCourse));
 
-        Course result = courseService.findById(1L);
+        CourseResponse result = courseService.findById(1L);
 
-        assertThat(result.getName()).isEqualTo("Welttanzprogramm Teil 1");
+        assertThat(result.name()).isEqualTo("Welttanzprogramm Teil 1");
     }
 
     @Test
@@ -86,7 +86,7 @@ class CourseServiceTest {
         when(courseRepository.findWithTariffsById(any())).thenReturn(Optional.of(sampleCourse));
         when(courseTariffRepository.save(any(CourseTariff.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Course result = courseService.create(request);
+        CourseResponse result = courseService.create(request);
 
         assertThat(result).isNotNull();
         verify(courseRepository).save(any(Course.class));
@@ -120,7 +120,7 @@ class CourseServiceTest {
                 List.of()
         );
 
-        Course result = courseService.update(1L, request);
+        CourseResponse result = courseService.update(1L, request);
 
         assertThat(result).isNotNull();
         verify(courseTariffRepository).deleteAllByCourseId(any());

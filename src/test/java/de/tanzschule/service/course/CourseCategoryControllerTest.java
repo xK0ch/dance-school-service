@@ -11,6 +11,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,11 +36,14 @@ class CourseCategoryControllerTest {
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
+    private CourseCategoryResponse sampleResponse(String name, int displayOrder) {
+        return new CourseCategoryResponse(1L, name, displayOrder, List.of(), LocalDateTime.now(), LocalDateTime.now());
+    }
+
     @Test
     @WithMockUser
     void getAll_returnsListOfCategories() throws Exception {
-        CourseCategory category = new CourseCategory("Erwachsene", 0);
-        when(courseCategoryService.findAll()).thenReturn(List.of(category));
+        when(courseCategoryService.findAll()).thenReturn(List.of(sampleResponse("Erwachsene", 0)));
 
         mockMvc.perform(get("/api/course-categories"))
                 .andExpect(status().isOk())
@@ -49,8 +53,7 @@ class CourseCategoryControllerTest {
     @Test
     @WithMockUser
     void getById_existingId_returnsCategory() throws Exception {
-        CourseCategory category = new CourseCategory("Jugendliche", 1);
-        when(courseCategoryService.findById(1L)).thenReturn(category);
+        when(courseCategoryService.findById(1L)).thenReturn(sampleResponse("Jugendliche", 1));
 
         mockMvc.perform(get("/api/course-categories/1"))
                 .andExpect(status().isOk())
@@ -70,8 +73,7 @@ class CourseCategoryControllerTest {
     @WithMockUser
     void create_authenticated_returns201() throws Exception {
         CourseCategoryRequest request = new CourseCategoryRequest("Kinder", 2);
-        CourseCategory created = new CourseCategory("Kinder", 2);
-        when(courseCategoryService.create(any(CourseCategoryRequest.class))).thenReturn(created);
+        when(courseCategoryService.create(any(CourseCategoryRequest.class))).thenReturn(sampleResponse("Kinder", 2));
 
         mockMvc.perform(post("/api/course-categories")
                         .with(csrf())
@@ -85,8 +87,7 @@ class CourseCategoryControllerTest {
     @WithMockUser
     void update_authenticated_returns200() throws Exception {
         CourseCategoryRequest request = new CourseCategoryRequest("Senioren", 3);
-        CourseCategory updated = new CourseCategory("Senioren", 3);
-        when(courseCategoryService.update(eq(1L), any(CourseCategoryRequest.class))).thenReturn(updated);
+        when(courseCategoryService.update(eq(1L), any(CourseCategoryRequest.class))).thenReturn(sampleResponse("Senioren", 3));
 
         mockMvc.perform(put("/api/course-categories/1")
                         .with(csrf())

@@ -15,38 +15,45 @@ public class CourseCategoryService {
         this.courseCategoryRepository = courseCategoryRepository;
     }
 
-    public List<CourseCategory> findAll() {
-        return courseCategoryRepository.findAllByOrderByDisplayOrderAsc();
+    @Transactional(readOnly = true)
+    public List<CourseCategoryResponse> findAll() {
+        return courseCategoryRepository.findAllByOrderByDisplayOrderAsc().stream()
+                .map(CourseCategoryResponse::from)
+                .toList();
     }
 
-    public CourseCategory findById(Long id) {
-        return courseCategoryRepository.findWithCoursesById(id)
+    @Transactional(readOnly = true)
+    public CourseCategoryResponse findById(Long id) {
+        CourseCategory category = courseCategoryRepository.findWithCoursesById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + id + " not found"));
+        return CourseCategoryResponse.from(category);
     }
 
     @Transactional
-    public CourseCategory create(CourseCategoryRequest request) {
+    public CourseCategoryResponse create(CourseCategoryRequest request) {
         CourseCategory category = new CourseCategory(request.name(), request.displayOrder());
-        return courseCategoryRepository.save(category);
+        return CourseCategoryResponse.from(courseCategoryRepository.save(category));
     }
 
     @Transactional
-    public CourseCategory update(Long id, CourseCategoryRequest request) {
-        CourseCategory category = findById(id);
+    public CourseCategoryResponse update(Long id, CourseCategoryRequest request) {
+        CourseCategory category = courseCategoryRepository.findWithCoursesById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + id + " not found"));
         category.setName(request.name());
         category.setDisplayOrder(request.displayOrder());
         category.setUpdatedAt(LocalDateTime.now());
-        return courseCategoryRepository.save(category);
+        return CourseCategoryResponse.from(courseCategoryRepository.save(category));
     }
 
     @Transactional
     public void delete(Long id) {
-        CourseCategory category = findById(id);
+        CourseCategory category = courseCategoryRepository.findWithCoursesById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + id + " not found"));
         courseCategoryRepository.delete(category);
     }
 
     @Transactional
-    public List<CourseCategory> reorder(List<Long> orderedIds) {
+    public List<CourseCategoryResponse> reorder(List<Long> orderedIds) {
         List<CourseCategory> categories = courseCategoryRepository.findAllById(orderedIds);
         for (int i = 0; i < orderedIds.size(); i++) {
             Long categoryId = orderedIds.get(i);
@@ -57,6 +64,8 @@ public class CourseCategoryService {
             category.setDisplayOrder(i);
             category.setUpdatedAt(LocalDateTime.now());
         }
-        return courseCategoryRepository.saveAll(categories);
+        return courseCategoryRepository.saveAll(categories).stream()
+                .map(CourseCategoryResponse::from)
+                .toList();
     }
 }
