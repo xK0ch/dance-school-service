@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseCategoryRepository extends JpaRepository<CourseCategory, Long> {
 
-    @EntityGraph(attributePaths = "courses.tariffs")
+    @EntityGraph(attributePaths = "courses")
     List<CourseCategory> findAllByOrderByDisplayOrderAsc();
 
-    @EntityGraph(attributePaths = "courses.tariffs")
+    @EntityGraph(attributePaths = "courses")
     Optional<CourseCategory> findWithCoursesById(Long id);
 }

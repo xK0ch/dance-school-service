@@ -48,6 +48,7 @@ public class Course extends BaseEntity {
 
     @OneToMany(mappedBy = "course")
     @OrderBy("id ASC")
+    @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
     private List<CourseTariff> tariffs = new ArrayList<>();
 
     protected Course() {
