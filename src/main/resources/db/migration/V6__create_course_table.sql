@@ -1,0 +1,14 @@
+CREATE TABLE course (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    start_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    number_of_hours VARCHAR(100) NOT NULL,
+    teacher VARCHAR(255) NOT NULL,
+    remark TEXT,
+    partner_option BOOLEAN NOT NULL DEFAULT false,
+    category_id BIGINT NOT NULL REFERENCES course_category(id),
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now()
+);

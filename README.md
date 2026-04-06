@@ -155,6 +155,89 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 [3, 1, 2]
 ```
 
+### Course Categories
+
+| Method | Endpoint                          | Auth     | Description                              |
+|--------|-----------------------------------|----------|------------------------------------------|
+| GET    | `/api/course-categories`          | Public   | Get all categories with courses (sorted) |
+| GET    | `/api/course-categories/{id}`     | Public   | Get category by ID with courses          |
+| POST   | `/api/course-categories`          | Required | Create a new category                    |
+| PUT    | `/api/course-categories/{id}`     | Required | Update a category                        |
+| DELETE | `/api/course-categories/{id}`     | Required | Delete a category                        |
+| PUT    | `/api/course-categories/reorder`  | Required | Reorder categories by list of IDs        |
+
+**Course Category Request:**
+```json
+{
+  "name": "Erwachsene",
+  "displayOrder": 0
+}
+```
+
+**Course Category Response:**
+```json
+{
+  "id": 1,
+  "name": "Erwachsene",
+  "displayOrder": 0,
+  "courses": [
+    {
+      "id": 1,
+      "name": "Welttanzprogramm Teil 1",
+      "startDate": "2026-05-01",
+      "startTime": "19:45:00",
+      "endTime": "21:30:00",
+      "numberOfHours": "8 Doppelstunden",
+      "teacher": "Uwe Höftmann",
+      "remark": "Anfängerkurs für Paare",
+      "partnerOption": true,
+      "categoryId": 1,
+      "tariffs": [
+        { "id": 1, "name": "Normal", "price": 78.00, "courseId": 1, "createdAt": "...", "updatedAt": "..." },
+        { "id": 2, "name": "Wiederholer", "price": 65.00, "courseId": 1, "createdAt": "...", "updatedAt": "..." }
+      ],
+      "createdAt": "2026-04-06T12:00:00",
+      "updatedAt": "2026-04-06T12:00:00"
+    }
+  ],
+  "createdAt": "2026-04-06T12:00:00",
+  "updatedAt": "2026-04-06T12:00:00"
+}
+```
+
+**Reorder Request:**
+```json
+[3, 1, 2]
+```
+
+### Courses
+
+| Method | Endpoint              | Auth     | Description                                |
+|--------|-----------------------|----------|--------------------------------------------|
+| GET    | `/api/courses/{id}`   | Public   | Get course by ID with tariffs              |
+| POST   | `/api/courses`        | Required | Create a new course with tariffs           |
+| PUT    | `/api/courses/{id}`   | Required | Update a course (replaces tariffs)         |
+| DELETE | `/api/courses/{id}`   | Required | Delete a course and all its tariffs        |
+
+**Course Request:**
+```json
+{
+  "name": "Welttanzprogramm Teil 1",
+  "startDate": "2026-05-01",
+  "startTime": "19:45",
+  "endTime": "21:30",
+  "numberOfHours": "8 Doppelstunden",
+  "teacher": "Uwe Höftmann",
+  "remark": "Anfängerkurs für Paare",
+  "partnerOption": true,
+  "categoryId": 1,
+  "tariffs": [
+    { "name": "Normal", "price": 78.00 },
+    { "name": "Wiederholer", "price": 65.00 }
+  ]
+}
+```
+
 ### Contact
 
 | Method | Endpoint        | Auth   | Description                          |
@@ -288,6 +371,23 @@ src/main/java/de/tanzschule/service/
 │   ├── ImageRepository.java
 │   ├── ImageService.java
 │   └── ImageResponse.java
+├── course/
+│   ├── Course.java
+│   ├── CourseCategory.java
+│   ├── CourseCategoryController.java
+│   ├── CourseCategoryRepository.java
+│   ├── CourseCategoryRequest.java
+│   ├── CourseCategoryResponse.java
+│   ├── CourseCategoryService.java
+│   ├── CourseController.java
+│   ├── CourseRepository.java
+│   ├── CourseRequest.java
+│   ├── CourseResponse.java
+│   ├── CourseService.java
+│   ├── CourseTariff.java
+│   ├── CourseTariffRepository.java
+│   ├── CourseTariffRequest.java
+│   └── CourseTariffResponse.java
 ├── contact/
 │   ├── ContactRequest.java
 │   ├── ContactService.java
@@ -307,3 +407,6 @@ Flyway migrations are located in `src/main/resources/db/migration/`:
 | `V2__create_faq_table.sql` | FAQ table with display_order |
 | `V3__create_gallery_event_table.sql` | Gallery event table |
 | `V4__create_image_table.sql` | Image table with FK to gallery_event |
+| `V5__create_course_category_table.sql` | Course category table |
+| `V6__create_course_table.sql` | Course table with FK to course_category |
+| `V7__create_course_tariff_table.sql` | Course tariff table with FK to course |

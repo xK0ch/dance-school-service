@@ -1,0 +1,56 @@
+package de.tanzschule.service.course;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.net.URI;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/courses")
+@Tag(name = "Courses", description = "Course management")
+public class CourseController {
+
+    private final CourseService courseService;
+
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get course by ID", description = "Returns a single course with its tariffs")
+    @SecurityRequirements
+    public CourseResponse getById(@PathVariable Long id) {
+        return CourseResponse.from(courseService.findById(id));
+    }
+
+    @PostMapping
+    @Operation(summary = "Create course", description = "Create a new course with tariffs (requires authentication)")
+    public ResponseEntity<CourseResponse> create(@Valid @RequestBody CourseRequest request) {
+        Course created = courseService.create(request);
+        CourseResponse response = CourseResponse.from(created);
+        return ResponseEntity.created(URI.create("/api/courses/" + created.getId())).body(response);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Update course", description = "Update an existing course and its tariffs (requires authentication)")
+    public CourseResponse update(@PathVariable Long id, @Valid @RequestBody CourseRequest request) {
+        return CourseResponse.from(courseService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete course", description = "Delete a course and all its tariffs (requires authentication)")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        courseService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

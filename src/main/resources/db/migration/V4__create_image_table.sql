@@ -9,5 +9,3 @@ CREATE TABLE image (
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
-
-CREATE INDEX idx_image_gallery_event_id ON image(gallery_event_id);
