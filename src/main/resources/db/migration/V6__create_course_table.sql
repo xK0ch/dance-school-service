@@ -8,6 +8,7 @@ CREATE TABLE course (
     teacher VARCHAR(255) NOT NULL,
     remark TEXT,
     partner_option BOOLEAN NOT NULL DEFAULT false,
+    display_order INTEGER NOT NULL DEFAULT 0,
     category_id BIGINT NOT NULL REFERENCES course_category(id),
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()

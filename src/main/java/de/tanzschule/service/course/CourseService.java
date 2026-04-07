@@ -90,6 +90,23 @@ public class CourseService {
     }
 
     @Transactional
+    public List<CourseResponse> reorder(List<Long> orderedIds) {
+        List<Course> courses = courseRepository.findAllById(orderedIds);
+        for (int i = 0; i < orderedIds.size(); i++) {
+            Long courseId = orderedIds.get(i);
+            Course course = courses.stream()
+                    .filter(c -> c.getId().equals(courseId))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("Course with id " + courseId + " not found"));
+            course.setDisplayOrder(i);
+            course.setUpdatedAt(LocalDateTime.now());
+        }
+        return courseRepository.saveAll(courses).stream()
+                .map(CourseResponse::from)
+                .toList();
+    }
+
+    @Transactional
     public void delete(Long id) {
         Course course = courseRepository.findWithTariffsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course with id " + id + " not found"));

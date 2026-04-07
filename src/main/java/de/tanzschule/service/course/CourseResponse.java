@@ -16,6 +16,7 @@ public record CourseResponse(
         String teacher,
         String remark,
         boolean partnerOption,
+        int displayOrder,
         Long categoryId,
         List<CourseTariffResponse> tariffs,
         LocalDateTime createdAt,
@@ -33,6 +34,7 @@ public record CourseResponse(
                 course.getTeacher(),
                 course.getRemark(),
                 course.isPartnerOption(),
+                course.getDisplayOrder(),
                 course.getCategory().getId(),
                 course.getTariffs().stream()
                         .map(CourseTariffResponse::from)

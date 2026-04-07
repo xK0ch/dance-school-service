@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,5 +52,11 @@ public class CourseController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         courseService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/reorder")
+    @Operation(summary = "Reorder courses", description = "Reorder courses by providing a list of IDs in the desired order (requires authentication)")
+    public List<CourseResponse> reorder(@RequestBody List<Long> orderedIds) {
+        return courseService.reorder(orderedIds);
     }
 }

@@ -20,7 +20,7 @@ public class CourseCategory extends BaseEntity {
     private int displayOrder;
 
     @OneToMany(mappedBy = "category")
-    @OrderBy("startDate ASC, startTime ASC")
+    @OrderBy("displayOrder ASC")
     private List<Course> courses = new ArrayList<>();
 
     protected CourseCategory() {

@@ -42,6 +42,9 @@ public class Course extends BaseEntity {
     @Column(name = "partner_option", nullable = false)
     private boolean partnerOption;
 
+    @Column(name = "display_order", nullable = false)
+    private int displayOrder;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private CourseCategory category;
@@ -67,6 +70,14 @@ public class Course extends BaseEntity {
         this.remark = remark;
         this.partnerOption = partnerOption;
         this.category = category;
+    }
+
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public String getName() {
