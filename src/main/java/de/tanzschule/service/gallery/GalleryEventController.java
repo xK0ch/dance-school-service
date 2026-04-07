@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,15 +29,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/gallery-events")
 @Tag(name = "Gallery Events", description = "Gallery event and image management")
+@RequiredArgsConstructor
 public class GalleryEventController {
 
     private final GalleryEventService galleryEventService;
     private final ImageService imageService;
-
-    public GalleryEventController(GalleryEventService galleryEventService, ImageService imageService) {
-        this.galleryEventService = galleryEventService;
-        this.imageService = imageService;
-    }
 
     @GetMapping
     @Operation(summary = "Get all gallery events", description = "Returns all gallery events sorted by date descending")

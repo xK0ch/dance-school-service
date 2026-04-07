@@ -37,6 +37,9 @@ dependencies {
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
 
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
     runtimeOnly "org.postgresql:postgresql:${postgresqlVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

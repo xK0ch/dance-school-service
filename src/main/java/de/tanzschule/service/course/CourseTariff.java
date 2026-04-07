@@ -8,9 +8,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "course_tariff")
+@Getter
+@Setter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class CourseTariff extends BaseEntity {
 
     @Column(nullable = false)
@@ -23,37 +29,10 @@ public class CourseTariff extends BaseEntity {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    protected CourseTariff() {
-    }
-
     public CourseTariff(String name, BigDecimal price, Course course) {
         super();
         this.name = name;
         this.price = price;
-        this.course = course;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Course getCourse() {
-        return course;
-    }
-
-    public void setCourse(Course course) {
         this.course = course;
     }
 }

@@ -13,9 +13,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "course")
+@Getter
+@Setter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Course extends BaseEntity {
 
     @Column(nullable = false)
@@ -54,9 +60,6 @@ public class Course extends BaseEntity {
     @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
     private List<CourseTariff> tariffs = new ArrayList<>();
 
-    protected Course() {
-    }
-
     public Course(String name, LocalDate startDate, LocalTime startTime, LocalTime endTime,
                   String numberOfHours, String teacher, String remark, boolean partnerOption,
                   CourseCategory category) {
@@ -70,89 +73,5 @@ public class Course extends BaseEntity {
         this.remark = remark;
         this.partnerOption = partnerOption;
         this.category = category;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(int displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getNumberOfHours() {
-        return numberOfHours;
-    }
-
-    public void setNumberOfHours(String numberOfHours) {
-        this.numberOfHours = numberOfHours;
-    }
-
-    public String getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(String teacher) {
-        this.teacher = teacher;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    public boolean isPartnerOption() {
-        return partnerOption;
-    }
-
-    public void setPartnerOption(boolean partnerOption) {
-        this.partnerOption = partnerOption;
-    }
-
-    public CourseCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(CourseCategory category) {
-        this.category = category;
-    }
-
-    public List<CourseTariff> getTariffs() {
-        return tariffs;
     }
 }

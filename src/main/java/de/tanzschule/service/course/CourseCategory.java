@@ -8,9 +8,15 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "course_category")
+@Getter
+@Setter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class CourseCategory extends BaseEntity {
 
     @Column(nullable = false, unique = true)
@@ -23,32 +29,9 @@ public class CourseCategory extends BaseEntity {
     @OrderBy("displayOrder ASC")
     private List<Course> courses = new ArrayList<>();
 
-    protected CourseCategory() {
-    }
-
     public CourseCategory(String name, int displayOrder) {
         super();
         this.name = name;
         this.displayOrder = displayOrder;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(int displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
     }
 }

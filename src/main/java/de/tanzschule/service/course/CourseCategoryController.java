@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/course-categories")
 @Tag(name = "Course Categories", description = "Course category management")
+@RequiredArgsConstructor
 public class CourseCategoryController {
 
     private final CourseCategoryService courseCategoryService;
-
-    public CourseCategoryController(CourseCategoryService courseCategoryService) {
-        this.courseCategoryService = courseCategoryService;
-    }
 
     @GetMapping
     @Operation(summary = "Get all course categories", description = "Returns all course categories with their courses, sorted by display order")

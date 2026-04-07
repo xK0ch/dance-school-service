@@ -8,9 +8,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "image")
+@Getter
+@Setter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class Image extends BaseEntity {
 
     @Column(nullable = false, unique = true)
@@ -32,9 +38,6 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "gallery_event_id")
     private GalleryEvent galleryEvent;
 
-    protected Image() {
-    }
-
     public Image(String filename, String originalFilename, String contentType, long fileSize, int displayOrder) {
         super();
         this.filename = filename;
@@ -42,37 +45,5 @@ public class Image extends BaseEntity {
         this.contentType = contentType;
         this.fileSize = fileSize;
         this.displayOrder = displayOrder;
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public String getOriginalFilename() {
-        return originalFilename;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(int displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public GalleryEvent getGalleryEvent() {
-        return galleryEvent;
-    }
-
-    public void setGalleryEvent(GalleryEvent galleryEvent) {
-        this.galleryEvent = galleryEvent;
     }
 }

@@ -53,7 +53,7 @@ class CourseControllerTest {
                 LocalDate.of(2026, 5, 1),
                 LocalTime.of(19, 45),
                 LocalTime.of(21, 30),
-                "8 Doppelstunden", "Uwe Höftmann", null, true, 1L,
+                "8 Doppelstunden", "Uwe Höftmann", null, true, 0, 1L,
                 List.of(),
                 LocalDateTime.now(), LocalDateTime.now()
         );

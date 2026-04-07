@@ -3,23 +3,17 @@ package de.tanzschule.service.course;
 import de.tanzschule.service.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseCategoryRepository courseCategoryRepository;
     private final CourseTariffRepository courseTariffRepository;
-
-    public CourseService(CourseRepository courseRepository,
-                         CourseCategoryRepository courseCategoryRepository,
-                         CourseTariffRepository courseTariffRepository) {
-        this.courseRepository = courseRepository;
-        this.courseCategoryRepository = courseCategoryRepository;
-        this.courseTariffRepository = courseTariffRepository;
-    }
 
     @Transactional(readOnly = true)
     public CourseResponse findById(Long id) {

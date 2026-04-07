@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/faqs")
 @Tag(name = "FAQ", description = "Frequently asked questions management")
+@RequiredArgsConstructor
 public class FaqController {
 
     private final FaqService faqService;
-
-    public FaqController(FaqService faqService) {
-        this.faqService = faqService;
-    }
 
     @GetMapping
     @Operation(summary = "Get all FAQs", description = "Returns all FAQs sorted by display order")

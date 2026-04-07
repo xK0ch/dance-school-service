@@ -5,19 +5,16 @@ import de.tanzschule.service.image.ImageService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class GalleryEventService {
 
     private final GalleryEventRepository galleryEventRepository;
     private final ImageService imageService;
-
-    public GalleryEventService(GalleryEventRepository galleryEventRepository, ImageService imageService) {
-        this.galleryEventRepository = galleryEventRepository;
-        this.imageService = imageService;
-    }
 
     public List<GalleryEvent> findAll() {
         return galleryEventRepository.findAllByOrderByDateDesc();

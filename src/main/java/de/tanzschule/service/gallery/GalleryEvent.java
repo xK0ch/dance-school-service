@@ -10,9 +10,15 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "gallery_event")
+@Getter
+@Setter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class GalleryEvent extends BaseEntity {
 
     @Column(nullable = false)
@@ -25,32 +31,9 @@ public class GalleryEvent extends BaseEntity {
     @OrderBy("displayOrder ASC")
     private List<Image> images = new ArrayList<>();
 
-    protected GalleryEvent() {
-    }
-
     public GalleryEvent(String name, LocalDate date) {
         super();
         this.name = name;
         this.date = date;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public List<Image> getImages() {
-        return images;
     }
 }
