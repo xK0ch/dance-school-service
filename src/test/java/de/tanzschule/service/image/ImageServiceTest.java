@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,6 +38,10 @@ class ImageServiceTest {
 
     private GalleryEvent galleryEvent;
 
+    private final UUID id = UUID.randomUUID();
+    private final UUID nonExistingId = UUID.randomUUID();
+    private final UUID galleryEventId = UUID.randomUUID();
+
     @BeforeEach
     void setUp() {
         imageService = new ImageService(imageRepository, tempDir.toString());
@@ -46,28 +51,28 @@ class ImageServiceTest {
     @Test
     void findById_existingId_returnsImage() {
         Image image = new Image("abc.jpg", "photo.jpg", "image/jpeg", 1024, 0);
-        when(imageRepository.findById(1L)).thenReturn(Optional.of(image));
+        when(imageRepository.findById(id)).thenReturn(Optional.of(image));
 
-        Image result = imageService.findById(1L);
+        Image result = imageService.findById(id);
 
         assertThat(result.getOriginalFilename()).isEqualTo("photo.jpg");
     }
 
     @Test
     void findById_nonExistingId_throwsException() {
-        when(imageRepository.findById(99L)).thenReturn(Optional.empty());
+        when(imageRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> imageService.findById(99L))
+        assertThatThrownBy(() -> imageService.findById(nonExistingId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("99");
+                .hasMessageContaining(nonExistingId.toString());
     }
 
     @Test
     void findByGalleryEventId_returnsImages() {
         Image image = new Image("abc.jpg", "photo.jpg", "image/jpeg", 1024, 0);
-        when(imageRepository.findByGalleryEventIdOrderByDisplayOrderAsc(1L)).thenReturn(List.of(image));
+        when(imageRepository.findByGalleryEventIdOrderByDisplayOrderAsc(galleryEventId)).thenReturn(List.of(image));
 
-        List<Image> result = imageService.findByGalleryEventId(1L);
+        List<Image> result = imageService.findByGalleryEventId(galleryEventId);
 
         assertThat(result).hasSize(1);
         assertThat(result.getFirst().getOriginalFilename()).isEqualTo("photo.jpg");
@@ -112,12 +117,12 @@ class ImageServiceTest {
     @Test
     void delete_existingId_deletesFileAndEntity() throws IOException {
         Image image = new Image("abc.jpg", "photo.jpg", "image/jpeg", 1024, 0);
-        when(imageRepository.findById(1L)).thenReturn(Optional.of(image));
+        when(imageRepository.findById(id)).thenReturn(Optional.of(image));
 
         Path filePath = tempDir.resolve("abc.jpg");
         Files.write(filePath, "fake-data".getBytes());
 
-        imageService.delete(1L);
+        imageService.delete(id);
 
         assertThat(Files.exists(filePath)).isFalse();
         verify(imageRepository).delete(image);
@@ -125,9 +130,9 @@ class ImageServiceTest {
 
     @Test
     void delete_nonExistingId_throwsException() {
-        when(imageRepository.findById(99L)).thenReturn(Optional.empty());
+        when(imageRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> imageService.delete(99L))
+        assertThatThrownBy(() -> imageService.delete(nonExistingId))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 

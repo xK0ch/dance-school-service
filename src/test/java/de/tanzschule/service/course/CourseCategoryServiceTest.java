@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,6 +29,9 @@ class CourseCategoryServiceTest {
 
     private CourseCategory sampleCategory;
 
+    private final UUID id = UUID.randomUUID();
+    private final UUID nonExistingId = UUID.randomUUID();
+
     @BeforeEach
     void setUp() {
         sampleCategory = new CourseCategory("Erwachsene", 0);
@@ -45,20 +49,20 @@ class CourseCategoryServiceTest {
 
     @Test
     void findById_existingId_returnsCategory() {
-        when(courseCategoryRepository.findWithCoursesById(1L)).thenReturn(Optional.of(sampleCategory));
+        when(courseCategoryRepository.findWithCoursesById(id)).thenReturn(Optional.of(sampleCategory));
 
-        CourseCategoryResponse result = courseCategoryService.findById(1L);
+        CourseCategoryResponse result = courseCategoryService.findById(id);
 
         assertThat(result.name()).isEqualTo("Erwachsene");
     }
 
     @Test
     void findById_nonExistingId_throwsException() {
-        when(courseCategoryRepository.findWithCoursesById(99L)).thenReturn(Optional.empty());
+        when(courseCategoryRepository.findWithCoursesById(nonExistingId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> courseCategoryService.findById(99L))
+        assertThatThrownBy(() -> courseCategoryService.findById(nonExistingId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("99");
+                .hasMessageContaining(nonExistingId.toString());
     }
 
     @Test
@@ -75,11 +79,11 @@ class CourseCategoryServiceTest {
 
     @Test
     void update_existingId_updatesCategory() {
-        when(courseCategoryRepository.findWithCoursesById(1L)).thenReturn(Optional.of(sampleCategory));
+        when(courseCategoryRepository.findWithCoursesById(id)).thenReturn(Optional.of(sampleCategory));
         when(courseCategoryRepository.save(any(CourseCategory.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         CourseCategoryRequest request = new CourseCategoryRequest("Senioren", 2);
-        CourseCategoryResponse result = courseCategoryService.update(1L, request);
+        CourseCategoryResponse result = courseCategoryService.update(id, request);
 
         assertThat(result.name()).isEqualTo("Senioren");
         assertThat(result.displayOrder()).isEqualTo(2);
@@ -87,18 +91,18 @@ class CourseCategoryServiceTest {
 
     @Test
     void delete_existingId_deletesCategory() {
-        when(courseCategoryRepository.findWithCoursesById(1L)).thenReturn(Optional.of(sampleCategory));
+        when(courseCategoryRepository.findWithCoursesById(id)).thenReturn(Optional.of(sampleCategory));
 
-        courseCategoryService.delete(1L);
+        courseCategoryService.delete(id);
 
         verify(courseCategoryRepository).delete(sampleCategory);
     }
 
     @Test
     void delete_nonExistingId_throwsException() {
-        when(courseCategoryRepository.findWithCoursesById(99L)).thenReturn(Optional.empty());
+        when(courseCategoryRepository.findWithCoursesById(nonExistingId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> courseCategoryService.delete(99L))
+        assertThatThrownBy(() -> courseCategoryService.delete(nonExistingId))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

@@ -17,11 +17,22 @@ public record CourseRegistrationRequest(
         String remark,
         @NotBlank String tariffName,
         @NotNull Boolean withPartner,
+        String partnerSalutation,
         String partnerFirstName,
         String partnerLastName,
+        String partnerBirthDate,
+        String partnerStreet,
+        String partnerCity,
+        String partnerPhone,
+        String partnerMobile,
+        @Email String partnerEmail,
         @NotNull Boolean directDebit,
         String accountHolder,
         String iban,
-        String bic
+        String bic,
+        Boolean samePaymentDetails,
+        String partnerAccountHolder,
+        String partnerIban,
+        String partnerBic
 ) {
 }

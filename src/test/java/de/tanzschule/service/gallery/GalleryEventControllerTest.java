@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -44,6 +45,10 @@ class GalleryEventControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
+    private final UUID eventId = UUID.randomUUID();
+    private final UUID nonExistingId = UUID.randomUUID();
+    private final UUID imageId = UUID.randomUUID();
+
     @Test
     @WithMockUser
     void getAll_returnsListOfEvents() throws Exception {
@@ -60,9 +65,9 @@ class GalleryEventControllerTest {
     @WithMockUser
     void getById_existingId_returnsEvent() throws Exception {
         GalleryEvent event = new GalleryEvent("Summer Party", LocalDate.of(2026, 7, 15));
-        when(galleryEventService.findById(1L)).thenReturn(event);
+        when(galleryEventService.findById(eq(eventId))).thenReturn(event);
 
-        mockMvc.perform(get("/api/gallery-events/1"))
+        mockMvc.perform(get("/api/gallery-events/" + eventId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Summer Party"));
     }
@@ -70,10 +75,10 @@ class GalleryEventControllerTest {
     @Test
     @WithMockUser
     void getById_nonExistingId_returns404() throws Exception {
-        when(galleryEventService.findById(99L))
-                .thenThrow(new ResourceNotFoundException("Gallery event with id 99 not found"));
+        when(galleryEventService.findById(eq(nonExistingId)))
+                .thenThrow(new ResourceNotFoundException("Gallery event with id " + nonExistingId + " not found"));
 
-        mockMvc.perform(get("/api/gallery-events/99"))
+        mockMvc.perform(get("/api/gallery-events/" + nonExistingId))
                 .andExpect(status().isNotFound());
     }
 
@@ -111,12 +116,12 @@ class GalleryEventControllerTest {
     @WithMockUser
     void update_authenticated_returns200() throws Exception {
         GalleryEvent updated = new GalleryEvent("Updated Party", LocalDate.of(2026, 8, 20));
-        when(galleryEventService.update(eq(1L), any(GalleryEventRequest.class))).thenReturn(updated);
+        when(galleryEventService.update(eq(eventId), any(GalleryEventRequest.class))).thenReturn(updated);
 
         String requestJson = objectMapper.writeValueAsString(
                 new GalleryEventRequest("Updated Party", LocalDate.of(2026, 8, 20)));
 
-        mockMvc.perform(put("/api/gallery-events/1")
+        mockMvc.perform(put("/api/gallery-events/" + eventId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson)
                         .with(csrf()))
@@ -127,9 +132,9 @@ class GalleryEventControllerTest {
     @Test
     @WithMockUser
     void delete_authenticated_returns204() throws Exception {
-        doNothing().when(galleryEventService).delete(1L);
+        doNothing().when(galleryEventService).delete(eq(eventId));
 
-        mockMvc.perform(delete("/api/gallery-events/1").with(csrf()))
+        mockMvc.perform(delete("/api/gallery-events/" + eventId).with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
@@ -137,7 +142,7 @@ class GalleryEventControllerTest {
     @WithMockUser
     void uploadImage_authenticated_returns201() throws Exception {
         GalleryEvent event = new GalleryEvent("Summer Party", LocalDate.of(2026, 7, 15));
-        when(galleryEventService.findById(1L)).thenReturn(event);
+        when(galleryEventService.findById(eq(eventId))).thenReturn(event);
 
         Image created = new Image("abc.jpg", "photo.jpg", "image/jpeg", 15, 0);
         created.setGalleryEvent(event);
@@ -146,7 +151,7 @@ class GalleryEventControllerTest {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "photo.jpg", "image/jpeg", "fake-image-data".getBytes());
 
-        mockMvc.perform(multipart("/api/gallery-events/1/images").file(file).with(csrf()))
+        mockMvc.perform(multipart("/api/gallery-events/" + eventId + "/images").file(file).with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.originalFilename").value("photo.jpg"));
     }
@@ -154,9 +159,9 @@ class GalleryEventControllerTest {
     @Test
     @WithMockUser
     void deleteImage_authenticated_returns204() throws Exception {
-        doNothing().when(imageService).delete(5L);
+        doNothing().when(imageService).delete(eq(imageId));
 
-        mockMvc.perform(delete("/api/gallery-events/1/images/5").with(csrf()))
+        mockMvc.perform(delete("/api/gallery-events/" + eventId + "/images/" + imageId).with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
@@ -164,11 +169,11 @@ class GalleryEventControllerTest {
     @WithMockUser
     void downloadImage_returnsFile() throws Exception {
         Image image = new Image("abc.jpg", "photo.jpg", "image/jpeg", 1024, 0);
-        when(imageService.findById(5L)).thenReturn(image);
+        when(imageService.findById(eq(imageId))).thenReturn(image);
         when(imageService.loadAsResource(image))
                 .thenReturn(new ByteArrayResource("fake-image-data".getBytes()));
 
-        mockMvc.perform(get("/api/gallery-events/1/images/5/download"))
+        mockMvc.perform(get("/api/gallery-events/" + eventId + "/images/" + imageId + "/download"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", "image/jpeg"))
                 .andExpect(header().string("Content-Disposition", "inline; filename=\"photo.jpg\""));

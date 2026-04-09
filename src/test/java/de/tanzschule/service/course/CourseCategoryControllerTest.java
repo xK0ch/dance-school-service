@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,8 +37,11 @@ class CourseCategoryControllerTest {
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
+    private final UUID id = UUID.randomUUID();
+    private final UUID nonExistingId = UUID.randomUUID();
+
     private CourseCategoryResponse sampleResponse(String name, int displayOrder) {
-        return new CourseCategoryResponse(1L, name, displayOrder, List.of(), LocalDateTime.now(), LocalDateTime.now());
+        return new CourseCategoryResponse(id, name, displayOrder, List.of(), LocalDateTime.now(), LocalDateTime.now());
     }
 
     @Test
@@ -53,9 +57,9 @@ class CourseCategoryControllerTest {
     @Test
     @WithMockUser
     void getById_existingId_returnsCategory() throws Exception {
-        when(courseCategoryService.findById(1L)).thenReturn(sampleResponse("Jugendliche", 1));
+        when(courseCategoryService.findById(eq(id))).thenReturn(sampleResponse("Jugendliche", 1));
 
-        mockMvc.perform(get("/api/course-categories/1"))
+        mockMvc.perform(get("/api/course-categories/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Jugendliche"));
     }
@@ -63,9 +67,9 @@ class CourseCategoryControllerTest {
     @Test
     @WithMockUser
     void getById_nonExistingId_returns404() throws Exception {
-        when(courseCategoryService.findById(99L)).thenThrow(new ResourceNotFoundException("Course category with id 99 not found"));
+        when(courseCategoryService.findById(eq(nonExistingId))).thenThrow(new ResourceNotFoundException("Course category with id " + nonExistingId + " not found"));
 
-        mockMvc.perform(get("/api/course-categories/99"))
+        mockMvc.perform(get("/api/course-categories/" + nonExistingId))
                 .andExpect(status().isNotFound());
     }
 
@@ -87,9 +91,9 @@ class CourseCategoryControllerTest {
     @WithMockUser
     void update_authenticated_returns200() throws Exception {
         CourseCategoryRequest request = new CourseCategoryRequest("Senioren", 3);
-        when(courseCategoryService.update(eq(1L), any(CourseCategoryRequest.class))).thenReturn(sampleResponse("Senioren", 3));
+        when(courseCategoryService.update(eq(id), any(CourseCategoryRequest.class))).thenReturn(sampleResponse("Senioren", 3));
 
-        mockMvc.perform(put("/api/course-categories/1")
+        mockMvc.perform(put("/api/course-categories/" + id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -100,9 +104,9 @@ class CourseCategoryControllerTest {
     @Test
     @WithMockUser
     void delete_authenticated_returns204() throws Exception {
-        doNothing().when(courseCategoryService).delete(1L);
+        doNothing().when(courseCategoryService).delete(eq(id));
 
-        mockMvc.perform(delete("/api/course-categories/1")
+        mockMvc.perform(delete("/api/course-categories/" + id)
                         .with(csrf()))
                 .andExpect(status().isNoContent());
     }

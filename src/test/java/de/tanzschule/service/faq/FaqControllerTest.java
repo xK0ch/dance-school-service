@@ -12,6 +12,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,6 +36,9 @@ class FaqControllerTest {
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
+    private final UUID id = UUID.randomUUID();
+    private final UUID nonExistingId = UUID.randomUUID();
+
     @Test
     @WithMockUser
     void getAll_returnsListOfFaqs() throws Exception {
@@ -51,9 +55,9 @@ class FaqControllerTest {
     @WithMockUser
     void getById_existingId_returnsFaq() throws Exception {
         Faq faq = new Faq("Question?", "Answer.", 0);
-        when(faqService.findById(1L)).thenReturn(faq);
+        when(faqService.findById(eq(id))).thenReturn(faq);
 
-        mockMvc.perform(get("/api/faqs/1"))
+        mockMvc.perform(get("/api/faqs/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.question").value("Question?"));
     }
@@ -61,9 +65,9 @@ class FaqControllerTest {
     @Test
     @WithMockUser
     void getById_nonExistingId_returns404() throws Exception {
-        when(faqService.findById(99L)).thenThrow(new ResourceNotFoundException("FAQ with id 99 not found"));
+        when(faqService.findById(eq(nonExistingId))).thenThrow(new ResourceNotFoundException("FAQ with id " + nonExistingId + " not found"));
 
-        mockMvc.perform(get("/api/faqs/99"))
+        mockMvc.perform(get("/api/faqs/" + nonExistingId))
                 .andExpect(status().isNotFound());
     }
 
@@ -87,9 +91,9 @@ class FaqControllerTest {
     void update_authenticated_returns200() throws Exception {
         FaqRequest request = new FaqRequest("Updated?", "Updated.", 1);
         Faq updated = new Faq("Updated?", "Updated.", 1);
-        when(faqService.update(eq(1L), any(FaqRequest.class))).thenReturn(updated);
+        when(faqService.update(eq(id), any(FaqRequest.class))).thenReturn(updated);
 
-        mockMvc.perform(put("/api/faqs/1")
+        mockMvc.perform(put("/api/faqs/" + id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -100,9 +104,9 @@ class FaqControllerTest {
     @Test
     @WithMockUser
     void delete_authenticated_returns204() throws Exception {
-        doNothing().when(faqService).delete(1L);
+        doNothing().when(faqService).delete(eq(id));
 
-        mockMvc.perform(delete("/api/faqs/1")
+        mockMvc.perform(delete("/api/faqs/" + id)
                         .with(csrf()))
                 .andExpect(status().isNoContent());
     }

@@ -45,18 +45,10 @@ public class CourseRegistrationService {
 
         body.append("Persönliche Daten\n");
         body.append("-----------------\n");
-        body.append("Anrede: ").append(request.salutation()).append("\n");
-        body.append("Vorname: ").append(request.firstName()).append("\n");
-        body.append("Nachname: ").append(request.lastName()).append("\n");
-        body.append("Geburtsdatum: ").append(request.birthDate()).append("\n");
-        body.append("Straße/Nr.: ").append(request.street()).append("\n");
-        body.append("PLZ/Stadt: ").append(request.city()).append("\n");
-        body.append("Telefon: ").append(request.phone()).append("\n");
-        if (request.mobile() != null && !request.mobile().isBlank()) {
-            body.append("Mobil: ").append(request.mobile()).append("\n");
-        }
-        body.append("E-Mail: ").append(request.email()).append("\n");
-        if (request.remark() != null && !request.remark().isBlank()) {
+        appendPersonData(body, request.salutation(), request.firstName(), request.lastName(),
+                request.birthDate(), request.street(), request.city(),
+                request.phone(), request.mobile(), request.email());
+        if (isNotBlank(request.remark())) {
             body.append("Bemerkung: ").append(request.remark()).append("\n");
         }
 
@@ -64,12 +56,9 @@ public class CourseRegistrationService {
         body.append("-------\n");
         if (Boolean.TRUE.equals(request.withPartner())) {
             body.append("Mit Partner: Ja\n");
-            if (request.partnerFirstName() != null && !request.partnerFirstName().isBlank()) {
-                body.append("Partner Vorname: ").append(request.partnerFirstName()).append("\n");
-            }
-            if (request.partnerLastName() != null && !request.partnerLastName().isBlank()) {
-                body.append("Partner Nachname: ").append(request.partnerLastName()).append("\n");
-            }
+            appendPersonData(body, request.partnerSalutation(), request.partnerFirstName(), request.partnerLastName(),
+                    request.partnerBirthDate(), request.partnerStreet(), request.partnerCity(),
+                    request.partnerPhone(), request.partnerMobile(), request.partnerEmail());
         } else {
             body.append("Mit Partner: Nein\n");
         }
@@ -78,14 +67,13 @@ public class CourseRegistrationService {
         body.append("-------\n");
         if (Boolean.TRUE.equals(request.directDebit())) {
             body.append("Zahlung per Lastschrift: Ja\n");
-            if (request.accountHolder() != null && !request.accountHolder().isBlank()) {
-                body.append("Kontoinhaber: ").append(request.accountHolder()).append("\n");
-            }
-            if (request.iban() != null && !request.iban().isBlank()) {
-                body.append("IBAN: ").append(request.iban()).append("\n");
-            }
-            if (request.bic() != null && !request.bic().isBlank()) {
-                body.append("BIC: ").append(request.bic()).append("\n");
+            appendBankData(body, "Teilnehmer", request.accountHolder(), request.iban(), request.bic());
+            if (Boolean.TRUE.equals(request.withPartner())) {
+                if (Boolean.TRUE.equals(request.samePaymentDetails())) {
+                    body.append("Partner Bankverbindung: Selbe wie Teilnehmer\n");
+                } else {
+                    appendBankData(body, "Partner", request.partnerAccountHolder(), request.partnerIban(), request.partnerBic());
+                }
             }
         } else {
             body.append("Zahlung per Lastschrift: Nein\n");
@@ -93,5 +81,53 @@ public class CourseRegistrationService {
 
         mail.setText(body.toString());
         mailSender.send(mail);
+    }
+
+    private void appendPersonData(StringBuilder body, String salutation, String firstName, String lastName,
+                                  String birthDate, String street, String city,
+                                  String phone, String mobile, String email) {
+        if (isNotBlank(salutation)) {
+            body.append("Anrede: ").append(salutation).append("\n");
+        }
+        if (isNotBlank(firstName)) {
+            body.append("Vorname: ").append(firstName).append("\n");
+        }
+        if (isNotBlank(lastName)) {
+            body.append("Nachname: ").append(lastName).append("\n");
+        }
+        if (isNotBlank(birthDate)) {
+            body.append("Geburtsdatum: ").append(birthDate).append("\n");
+        }
+        if (isNotBlank(street)) {
+            body.append("Straße/Nr.: ").append(street).append("\n");
+        }
+        if (isNotBlank(city)) {
+            body.append("PLZ/Stadt: ").append(city).append("\n");
+        }
+        if (isNotBlank(phone)) {
+            body.append("Telefon: ").append(phone).append("\n");
+        }
+        if (isNotBlank(mobile)) {
+            body.append("Mobil: ").append(mobile).append("\n");
+        }
+        if (isNotBlank(email)) {
+            body.append("E-Mail: ").append(email).append("\n");
+        }
+    }
+
+    private void appendBankData(StringBuilder body, String label, String accountHolder, String iban, String bic) {
+        if (isNotBlank(accountHolder)) {
+            body.append(label).append(" Kontoinhaber: ").append(accountHolder).append("\n");
+        }
+        if (isNotBlank(iban)) {
+            body.append(label).append(" IBAN: ").append(iban).append("\n");
+        }
+        if (isNotBlank(bic)) {
+            body.append(label).append(" BIC: ").append(bic).append("\n");
+        }
+    }
+
+    private boolean isNotBlank(String value) {
+        return value != null && !value.isBlank();
     }
 }

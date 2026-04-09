@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,6 +39,10 @@ class CourseServiceTest {
     private CourseCategory sampleCategory;
     private Course sampleCourse;
 
+    private final UUID id = UUID.randomUUID();
+    private final UUID nonExistingId = UUID.randomUUID();
+    private final UUID categoryId = UUID.randomUUID();
+
     @BeforeEach
     void setUp() {
         sampleCategory = new CourseCategory("Erwachsene", 0);
@@ -56,20 +61,20 @@ class CourseServiceTest {
 
     @Test
     void findById_existingId_returnsCourse() {
-        when(courseRepository.findWithTariffsById(1L)).thenReturn(Optional.of(sampleCourse));
+        when(courseRepository.findWithTariffsById(id)).thenReturn(Optional.of(sampleCourse));
 
-        CourseResponse result = courseService.findById(1L);
+        CourseResponse result = courseService.findById(id);
 
         assertThat(result.name()).isEqualTo("Welttanzprogramm Teil 1");
     }
 
     @Test
     void findById_nonExistingId_throwsException() {
-        when(courseRepository.findWithTariffsById(99L)).thenReturn(Optional.empty());
+        when(courseRepository.findWithTariffsById(nonExistingId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> courseService.findById(99L))
+        assertThatThrownBy(() -> courseService.findById(nonExistingId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("99");
+                .hasMessageContaining(nonExistingId.toString());
     }
 
     @Test
@@ -77,11 +82,11 @@ class CourseServiceTest {
         CourseRequest request = new CourseRequest(
                 "Discofox", LocalDate.of(2026, 6, 1),
                 LocalTime.of(20, 0), LocalTime.of(21, 0),
-                "4 Stunden", "Tabea Höftmann", "Anfängerkurs", true, 1L,
+                "4 Stunden", "Tabea Höftmann", "Anfängerkurs", true, categoryId,
                 List.of(new CourseTariffRequest("Normal", new BigDecimal("78.00")))
         );
 
-        when(courseCategoryRepository.findById(1L)).thenReturn(Optional.of(sampleCategory));
+        when(courseCategoryRepository.findById(categoryId)).thenReturn(Optional.of(sampleCategory));
         when(courseRepository.save(any(Course.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(courseRepository.findWithTariffsById(any())).thenReturn(Optional.of(sampleCourse));
         when(courseTariffRepository.save(any(CourseTariff.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -98,29 +103,29 @@ class CourseServiceTest {
         CourseRequest request = new CourseRequest(
                 "Discofox", LocalDate.of(2026, 6, 1),
                 LocalTime.of(20, 0), LocalTime.of(21, 0),
-                "4 Stunden", "Tabea Höftmann", null, false, 99L, List.of()
+                "4 Stunden", "Tabea Höftmann", null, false, nonExistingId, List.of()
         );
 
-        when(courseCategoryRepository.findById(99L)).thenReturn(Optional.empty());
+        when(courseCategoryRepository.findById(nonExistingId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> courseService.create(request))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("99");
+                .hasMessageContaining(nonExistingId.toString());
     }
 
     @Test
     void update_existingId_updatesCourse() {
         when(courseRepository.findWithTariffsById(any())).thenReturn(Optional.of(sampleCourse));
-        when(courseCategoryRepository.findById(1L)).thenReturn(Optional.of(sampleCategory));
+        when(courseCategoryRepository.findById(categoryId)).thenReturn(Optional.of(sampleCategory));
 
         CourseRequest request = new CourseRequest(
                 "Updated Course", LocalDate.of(2026, 7, 1),
                 LocalTime.of(18, 0), LocalTime.of(19, 30),
-                "6 Doppelstunden", "Uwe Höftmann", "Updated remark", false, 1L,
+                "6 Doppelstunden", "Uwe Höftmann", "Updated remark", false, categoryId,
                 List.of()
         );
 
-        CourseResponse result = courseService.update(1L, request);
+        CourseResponse result = courseService.update(id, request);
 
         assertThat(result).isNotNull();
         verify(courseTariffRepository).deleteAllByCourseId(any());
@@ -128,19 +133,19 @@ class CourseServiceTest {
 
     @Test
     void delete_existingId_deletesCourseAndTariffs() {
-        when(courseRepository.findWithTariffsById(1L)).thenReturn(Optional.of(sampleCourse));
+        when(courseRepository.findWithTariffsById(id)).thenReturn(Optional.of(sampleCourse));
 
-        courseService.delete(1L);
+        courseService.delete(id);
 
-        verify(courseTariffRepository).deleteAllByCourseId(1L);
+        verify(courseTariffRepository).deleteAllByCourseId(id);
         verify(courseRepository).delete(sampleCourse);
     }
 
     @Test
     void delete_nonExistingId_throwsException() {
-        when(courseRepository.findWithTariffsById(99L)).thenReturn(Optional.empty());
+        when(courseRepository.findWithTariffsById(nonExistingId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> courseService.delete(99L))
+        assertThatThrownBy(() -> courseService.delete(nonExistingId))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 }

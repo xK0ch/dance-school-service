@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,17 +44,21 @@ class CourseControllerTest {
 
     private CourseResponse sampleResponse;
 
+    private final UUID id = UUID.randomUUID();
+    private final UUID nonExistingId = UUID.randomUUID();
+    private final UUID categoryId = UUID.randomUUID();
+
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
         sampleResponse = new CourseResponse(
-                1L, "Welttanzprogramm Teil 1",
+                id, "Welttanzprogramm Teil 1",
                 LocalDate.of(2026, 5, 1),
                 LocalTime.of(19, 45),
                 LocalTime.of(21, 30),
-                "8 Doppelstunden", "Uwe Höftmann", null, true, 0, 1L,
+                "8 Doppelstunden", "Uwe Höftmann", null, true, 0, categoryId,
                 List.of(),
                 LocalDateTime.now(), LocalDateTime.now()
         );
@@ -62,9 +67,9 @@ class CourseControllerTest {
     @Test
     @WithMockUser
     void getById_existingId_returnsCourse() throws Exception {
-        when(courseService.findById(1L)).thenReturn(sampleResponse);
+        when(courseService.findById(eq(id))).thenReturn(sampleResponse);
 
-        mockMvc.perform(get("/api/courses/1"))
+        mockMvc.perform(get("/api/courses/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Welttanzprogramm Teil 1"))
                 .andExpect(jsonPath("$.teacher").value("Uwe Höftmann"))
@@ -74,9 +79,9 @@ class CourseControllerTest {
     @Test
     @WithMockUser
     void getById_nonExistingId_returns404() throws Exception {
-        when(courseService.findById(99L)).thenThrow(new ResourceNotFoundException("Course with id 99 not found"));
+        when(courseService.findById(eq(nonExistingId))).thenThrow(new ResourceNotFoundException("Course with id " + nonExistingId + " not found"));
 
-        mockMvc.perform(get("/api/courses/99"))
+        mockMvc.perform(get("/api/courses/" + nonExistingId))
                 .andExpect(status().isNotFound());
     }
 
@@ -86,7 +91,7 @@ class CourseControllerTest {
         CourseRequest request = new CourseRequest(
                 "Discofox", LocalDate.of(2026, 6, 1),
                 LocalTime.of(20, 0), LocalTime.of(21, 0),
-                "4 Stunden", "Tabea Höftmann", null, false, 1L,
+                "4 Stunden", "Tabea Höftmann", null, false, categoryId,
                 List.of(new CourseTariffRequest("Normal", new BigDecimal("78.00")))
         );
         when(courseService.create(any(CourseRequest.class))).thenReturn(sampleResponse);
@@ -105,11 +110,11 @@ class CourseControllerTest {
         CourseRequest request = new CourseRequest(
                 "Updated", LocalDate.of(2026, 7, 1),
                 LocalTime.of(18, 0), LocalTime.of(19, 30),
-                "6 Doppelstunden", "Uwe Höftmann", "Remark", true, 1L, List.of()
+                "6 Doppelstunden", "Uwe Höftmann", "Remark", true, categoryId, List.of()
         );
-        when(courseService.update(eq(1L), any(CourseRequest.class))).thenReturn(sampleResponse);
+        when(courseService.update(eq(id), any(CourseRequest.class))).thenReturn(sampleResponse);
 
-        mockMvc.perform(put("/api/courses/1")
+        mockMvc.perform(put("/api/courses/" + id)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -119,9 +124,9 @@ class CourseControllerTest {
     @Test
     @WithMockUser
     void delete_authenticated_returns204() throws Exception {
-        doNothing().when(courseService).delete(1L);
+        doNothing().when(courseService).delete(eq(id));
 
-        mockMvc.perform(delete("/api/courses/1")
+        mockMvc.perform(delete("/api/courses/" + id)
                         .with(csrf()))
                 .andExpect(status().isNoContent());
     }

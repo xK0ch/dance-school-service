@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -31,6 +32,7 @@ class CourseRegistrationServiceTest {
     private CourseRegistrationService registrationService;
 
     private Course sampleCourse;
+    private final UUID courseId = UUID.randomUUID();
 
     @BeforeEach
     void setUp() {
@@ -52,18 +54,22 @@ class CourseRegistrationServiceTest {
     }
 
     @Test
-    void register_validRequest_sendsEmail() {
-        when(courseRepository.findWithTariffsById(1L)).thenReturn(Optional.of(sampleCourse));
+    void register_withPartnerAndSeparateBankDetails_sendsEmail() {
+        when(courseRepository.findWithTariffsById(courseId)).thenReturn(Optional.of(sampleCourse));
 
         CourseRegistrationRequest request = new CourseRegistrationRequest(
                 "Herr", "Max", "Mustermann", "01.01.1990",
                 "Musterstraße 1", "12345 Musterstadt",
                 "0123456789", "0171234567", "max@example.com",
-                "Anfänger", "Normal", true, "Anna", "Mustermann",
-                true, "Max Mustermann", "DE89370400440532013000", "COBADEFFXXX"
+                "Anfänger", "Normal", true,
+                "Frau", "Anna", "Mustermann", "15.06.1992",
+                "Andere Straße 5", "54321 Andersstadt",
+                "0987654321", null, "anna@example.com",
+                true, "Max Mustermann", "DE89370400440532013000", "COBADEFFXXX",
+                false, "Anna Mustermann", "DE27100777770209299700", "DEUTDEDB101"
         );
 
-        registrationService.register(1L, request);
+        registrationService.register(courseId, request);
 
         ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
         verify(mailSender).send(captor.capture());
@@ -73,25 +79,54 @@ class CourseRegistrationServiceTest {
         assertThat(mail.getReplyTo()).isEqualTo("max@example.com");
         assertThat(mail.getSubject()).contains("Welttanzprogramm Teil 1");
         assertThat(mail.getText()).contains("Max");
-        assertThat(mail.getText()).contains("Mustermann");
         assertThat(mail.getText()).contains("Mit Partner: Ja");
-        assertThat(mail.getText()).contains("Zahlung per Lastschrift: Ja");
-        assertThat(mail.getText()).contains("DE89370400440532013000");
+        assertThat(mail.getText()).contains("Anna");
+        assertThat(mail.getText()).contains("anna@example.com");
+        assertThat(mail.getText()).contains("Teilnehmer IBAN: DE89370400440532013000");
+        assertThat(mail.getText()).contains("Partner IBAN: DE27100777770209299700");
+    }
+
+    @Test
+    void register_withPartnerAndSameBankDetails_sendsEmail() {
+        when(courseRepository.findWithTariffsById(courseId)).thenReturn(Optional.of(sampleCourse));
+
+        CourseRegistrationRequest request = new CourseRegistrationRequest(
+                "Herr", "Max", "Mustermann", "01.01.1990",
+                "Musterstraße 1", "12345 Musterstadt",
+                "0123456789", null, "max@example.com",
+                null, "Normal", true,
+                "Frau", "Anna", "Mustermann", "15.06.1992",
+                "Musterstraße 1", "12345 Musterstadt",
+                "0123456789", null, "anna@example.com",
+                true, "Max Mustermann", "DE89370400440532013000", null,
+                true, null, null, null
+        );
+
+        registrationService.register(courseId, request);
+
+        ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mailSender).send(captor.capture());
+
+        SimpleMailMessage mail = captor.getValue();
+        assertThat(mail.getText()).contains("Partner Bankverbindung: Selbe wie Teilnehmer");
+        assertThat(mail.getText()).doesNotContain("Partner IBAN");
     }
 
     @Test
     void register_withoutPartnerAndDirectDebit_sendsEmail() {
-        when(courseRepository.findWithTariffsById(1L)).thenReturn(Optional.of(sampleCourse));
+        when(courseRepository.findWithTariffsById(courseId)).thenReturn(Optional.of(sampleCourse));
 
         CourseRegistrationRequest request = new CourseRegistrationRequest(
                 "Frau", "Erika", "Muster", "15.03.1985",
                 "Hauptstraße 5", "24537 Neumünster",
                 "04321123456", null, "erika@example.com",
-                null, "Ermäßigt", false, null, null,
-                false, null, null, null
+                null, "Ermäßigt", false,
+                null, null, null, null, null, null, null, null, null,
+                false, null, null, null,
+                null, null, null, null
         );
 
-        registrationService.register(1L, request);
+        registrationService.register(courseId, request);
 
         ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
         verify(mailSender).send(captor.capture());
@@ -104,18 +139,20 @@ class CourseRegistrationServiceTest {
 
     @Test
     void register_nonExistingCourse_throwsException() {
-        when(courseRepository.findWithTariffsById(99L)).thenReturn(Optional.empty());
+        UUID missingId = UUID.randomUUID();
+        when(courseRepository.findWithTariffsById(missingId)).thenReturn(Optional.empty());
 
         CourseRegistrationRequest request = new CourseRegistrationRequest(
                 "Herr", "Max", "Mustermann", "01.01.1990",
                 "Musterstraße 1", "12345 Musterstadt",
                 "0123456789", null, "max@example.com",
-                null, "Normal", false, null, null,
-                false, null, null, null
+                null, "Normal", false,
+                null, null, null, null, null, null, null, null, null,
+                false, null, null, null,
+                null, null, null, null
         );
 
-        assertThatThrownBy(() -> registrationService.register(99L, request))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("99");
+        assertThatThrownBy(() -> registrationService.register(missingId, request))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 }
