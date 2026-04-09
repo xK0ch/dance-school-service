@@ -75,10 +75,10 @@ class GalleryEventIntegrationTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Summer Dance"))
                 .andExpect(jsonPath("$.date").value("2026-07-15"))
-                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.id").isString())
                 .andReturn().getResponse().getContentAsString();
 
-        Long eventId = objectMapper.readTree(createResponse).get("id").asLong();
+        String eventId = objectMapper.readTree(createResponse).get("id").asText();
 
         // Upload image to event
         MockMultipartFile file = new MockMultipartFile(
@@ -92,7 +92,7 @@ class GalleryEventIntegrationTest {
                 .andExpect(jsonPath("$.galleryEventId").value(eventId))
                 .andReturn().getResponse().getContentAsString();
 
-        Long imageId = objectMapper.readTree(uploadResponse).get("id").asLong();
+        String imageId = objectMapper.readTree(uploadResponse).get("id").asText();
 
         // Get event with images (public)
         mockMvc.perform(get("/api/gallery-events/" + eventId))
@@ -154,7 +154,7 @@ class GalleryEventIntegrationTest {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        Long eventId = objectMapper.readTree(createResponse).get("id").asLong();
+        String eventId = objectMapper.readTree(createResponse).get("id").asText();
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", "document.pdf", "application/pdf", "pdf-data".getBytes());
@@ -175,7 +175,7 @@ class GalleryEventIntegrationTest {
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
-        Long eventId = objectMapper.readTree(createResponse).get("id").asLong();
+        String eventId = objectMapper.readTree(createResponse).get("id").asText();
 
         // Upload two images
         MockMultipartFile file1 = new MockMultipartFile(

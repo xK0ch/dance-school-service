@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 public record CourseRequest(
         @NotBlank(message = "Name must not be blank")
@@ -32,7 +33,7 @@ public record CourseRequest(
         Boolean partnerOption,
 
         @NotNull(message = "Category ID must not be null")
-        Long categoryId,
+        UUID categoryId,
 
         @Valid
         List<CourseTariffRequest> tariffs

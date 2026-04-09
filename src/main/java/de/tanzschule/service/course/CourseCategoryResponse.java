@@ -3,9 +3,10 @@ package de.tanzschule.service.course;
 import de.tanzschule.service.common.BaseResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public record CourseCategoryResponse(
-        Long id,
+        UUID id,
         String name,
         int displayOrder,
         List<CourseResponse> courses,

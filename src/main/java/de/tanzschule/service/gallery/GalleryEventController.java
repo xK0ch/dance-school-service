@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -47,7 +48,7 @@ public class GalleryEventController {
     @GetMapping("/{id}")
     @Operation(summary = "Get gallery event by ID", description = "Returns a single gallery event with its images")
     @SecurityRequirements
-    public GalleryEventResponse getById(@PathVariable Long id) {
+    public GalleryEventResponse getById(@PathVariable UUID id) {
         return GalleryEventResponse.from(galleryEventService.findById(id));
     }
 
@@ -61,13 +62,13 @@ public class GalleryEventController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update gallery event", description = "Update an existing gallery event (requires authentication)")
-    public GalleryEventResponse update(@PathVariable Long id, @Valid @RequestBody GalleryEventRequest request) {
+    public GalleryEventResponse update(@PathVariable UUID id, @Valid @RequestBody GalleryEventRequest request) {
         return GalleryEventResponse.from(galleryEventService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete gallery event", description = "Delete a gallery event and all its images (requires authentication)")
-    public ResponseEntity<Void> delete(@PathVariable Long id) throws IOException {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) throws IOException {
         galleryEventService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -75,7 +76,7 @@ public class GalleryEventController {
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Upload image to gallery event", description = "Upload a new image to a gallery event (requires authentication)")
     public ResponseEntity<ImageResponse> uploadImage(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam("file") MultipartFile file) throws IOException {
         GalleryEvent event = galleryEventService.findById(id);
         Image created = imageService.upload(file, event);
@@ -85,14 +86,14 @@ public class GalleryEventController {
 
     @DeleteMapping("/{id}/images/{imageId}")
     @Operation(summary = "Delete image from gallery event", description = "Delete a single image from a gallery event (requires authentication)")
-    public ResponseEntity<Void> deleteImage(@PathVariable Long id, @PathVariable Long imageId) throws IOException {
+    public ResponseEntity<Void> deleteImage(@PathVariable UUID id, @PathVariable UUID imageId) throws IOException {
         imageService.delete(imageId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/images/reorder")
     @Operation(summary = "Reorder images in gallery event", description = "Reorder images by providing a list of IDs in the desired order (requires authentication)")
-    public List<ImageResponse> reorderImages(@PathVariable Long id, @RequestBody List<Long> orderedIds) {
+    public List<ImageResponse> reorderImages(@PathVariable UUID id, @RequestBody List<UUID> orderedIds) {
         return imageService.reorder(id, orderedIds).stream()
                 .map(ImageResponse::from)
                 .toList();
@@ -101,7 +102,7 @@ public class GalleryEventController {
     @GetMapping("/{id}/images/{imageId}/download")
     @Operation(summary = "Download image", description = "Returns the image file for display or download")
     @SecurityRequirements
-    public ResponseEntity<Resource> downloadImage(@PathVariable Long id, @PathVariable Long imageId) throws IOException {
+    public ResponseEntity<Resource> downloadImage(@PathVariable UUID id, @PathVariable UUID imageId) throws IOException {
         Image image = imageService.findById(imageId);
         Resource resource = imageService.loadAsResource(image);
 

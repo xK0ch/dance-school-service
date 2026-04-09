@@ -3,6 +3,7 @@ package de.tanzschule.service.faq;
 import de.tanzschule.service.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ public class FaqService {
         return faqRepository.findAllByOrderByDisplayOrderAsc();
     }
 
-    public Faq findById(Long id) {
+    public Faq findById(UUID id) {
         return faqRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("FAQ with id " + id + " not found"));
     }
@@ -29,7 +30,7 @@ public class FaqService {
     }
 
     @Transactional
-    public Faq update(Long id, FaqRequest request) {
+    public Faq update(UUID id, FaqRequest request) {
         Faq faq = findById(id);
         faq.setQuestion(request.question());
         faq.setAnswer(request.answer());
@@ -39,16 +40,16 @@ public class FaqService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Faq faq = findById(id);
         faqRepository.delete(faq);
     }
 
     @Transactional
-    public List<Faq> reorder(List<Long> orderedIds) {
+    public List<Faq> reorder(List<UUID> orderedIds) {
         List<Faq> faqs = faqRepository.findAllById(orderedIds);
         for (int i = 0; i < orderedIds.size(); i++) {
-            Long faqId = orderedIds.get(i);
+            UUID faqId = orderedIds.get(i);
             Faq faq = faqs.stream()
                     .filter(f -> f.getId().equals(faqId))
                     .findFirst()

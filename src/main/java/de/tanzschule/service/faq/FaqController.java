@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +38,7 @@ public class FaqController {
     @GetMapping("/{id}")
     @Operation(summary = "Get FAQ by ID", description = "Returns a single FAQ by its ID")
     @SecurityRequirements
-    public FaqResponse getById(@PathVariable Long id) {
+    public FaqResponse getById(@PathVariable UUID id) {
         return FaqResponse.from(faqService.findById(id));
     }
 
@@ -51,20 +52,20 @@ public class FaqController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update FAQ", description = "Update an existing FAQ entry (requires authentication)")
-    public FaqResponse update(@PathVariable Long id, @Valid @RequestBody FaqRequest request) {
+    public FaqResponse update(@PathVariable UUID id, @Valid @RequestBody FaqRequest request) {
         return FaqResponse.from(faqService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete FAQ", description = "Delete a FAQ entry (requires authentication)")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         faqService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/reorder")
     @Operation(summary = "Reorder FAQs", description = "Reorder FAQs by providing a list of IDs in the desired order (requires authentication)")
-    public List<FaqResponse> reorder(@RequestBody List<Long> orderedIds) {
+    public List<FaqResponse> reorder(@RequestBody List<UUID> orderedIds) {
         return faqService.reorder(orderedIds).stream()
                 .map(FaqResponse::from)
                 .toList();

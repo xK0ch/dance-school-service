@@ -2,9 +2,10 @@ package de.tanzschule.service.faq;
 
 import de.tanzschule.service.common.BaseResponse;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record FaqResponse(
-        Long id,
+        UUID id,
         String question,
         String answer,
         int displayOrder,

@@ -2,15 +2,16 @@ package de.tanzschule.service.image;
 
 import de.tanzschule.service.common.BaseResponse;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record ImageResponse(
-        Long id,
+        UUID id,
         String filename,
         String originalFilename,
         String contentType,
         long fileSize,
         int displayOrder,
-        Long galleryEventId,
+        UUID galleryEventId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) implements BaseResponse {

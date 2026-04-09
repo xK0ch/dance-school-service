@@ -1,10 +1,11 @@
 package de.tanzschule.service.common;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface BaseResponse {
 
-    Long id();
+    UUID id();
 
     LocalDateTime createdAt();
 

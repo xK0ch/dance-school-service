@@ -5,6 +5,7 @@ import de.tanzschule.service.image.ImageService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class GalleryEventService {
         return galleryEventRepository.findAllByOrderByDateDesc();
     }
 
-    public GalleryEvent findById(Long id) {
+    public GalleryEvent findById(UUID id) {
         return galleryEventRepository.findWithImagesById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Gallery event with id " + id + " not found"));
     }
@@ -32,7 +33,7 @@ public class GalleryEventService {
     }
 
     @Transactional
-    public GalleryEvent update(Long id, GalleryEventRequest request) {
+    public GalleryEvent update(UUID id, GalleryEventRequest request) {
         GalleryEvent event = findById(id);
         event.setName(request.name());
         event.setDate(request.date());
@@ -41,7 +42,7 @@ public class GalleryEventService {
     }
 
     @Transactional
-    public void delete(Long id) throws IOException {
+    public void delete(UUID id) throws IOException {
         GalleryEvent event = findById(id);
         imageService.deleteAllByGalleryEvent(event);
         galleryEventRepository.delete(event);

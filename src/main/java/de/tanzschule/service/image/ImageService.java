@@ -34,12 +34,12 @@ public class ImageService {
         this.uploadDir = Path.of(uploadDir);
     }
 
-    public Image findById(Long id) {
+    public Image findById(UUID id) {
         return imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Image with id " + id + " not found"));
     }
 
-    public List<Image> findByGalleryEventId(Long galleryEventId) {
+    public List<Image> findByGalleryEventId(UUID galleryEventId) {
         return imageRepository.findByGalleryEventIdOrderByDisplayOrderAsc(galleryEventId);
     }
 
@@ -78,7 +78,7 @@ public class ImageService {
     }
 
     @Transactional
-    public void delete(Long id) throws IOException {
+    public void delete(UUID id) throws IOException {
         Image image = findById(id);
         Path filePath = uploadDir.resolve(image.getFilename());
         Files.deleteIfExists(filePath);
@@ -96,10 +96,10 @@ public class ImageService {
     }
 
     @Transactional
-    public List<Image> reorder(Long galleryEventId, List<Long> orderedIds) {
+    public List<Image> reorder(UUID galleryEventId, List<UUID> orderedIds) {
         List<Image> images = imageRepository.findAllById(orderedIds);
         for (int i = 0; i < orderedIds.size(); i++) {
-            Long imageId = orderedIds.get(i);
+            UUID imageId = orderedIds.get(i);
             Image image = images.stream()
                     .filter(img -> img.getId().equals(imageId))
                     .findFirst()

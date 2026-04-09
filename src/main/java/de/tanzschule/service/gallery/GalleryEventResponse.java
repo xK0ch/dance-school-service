@@ -5,9 +5,10 @@ import de.tanzschule.service.image.ImageResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public record GalleryEventResponse(
-        Long id,
+        UUID id,
         String name,
         LocalDate date,
         List<ImageResponse> images,

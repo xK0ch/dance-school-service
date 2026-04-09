@@ -5,9 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 public record CourseResponse(
-        Long id,
+        UUID id,
         String name,
         LocalDate startDate,
         LocalTime startTime,
@@ -17,7 +18,7 @@ public record CourseResponse(
         String remark,
         boolean partnerOption,
         int displayOrder,
-        Long categoryId,
+        UUID categoryId,
         List<CourseTariffResponse> tariffs,
         LocalDateTime createdAt,
         LocalDateTime updatedAt

@@ -57,10 +57,10 @@ class FaqIntegrationTest {
                         .content(objectMapper.writeValueAsString(createRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.question").value("What courses do you offer?"))
-                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.id").isString())
                 .andReturn().getResponse().getContentAsString();
 
-        Long id = objectMapper.readTree(createResponse).get("id").asLong();
+        String id = objectMapper.readTree(createResponse).get("id").asText();
 
         // Read all (public)
         mockMvc.perform(get("/api/faqs"))

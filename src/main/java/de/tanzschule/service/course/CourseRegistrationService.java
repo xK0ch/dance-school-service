@@ -1,6 +1,7 @@
 package de.tanzschule.service.course;
 
 import de.tanzschule.service.exception.ResourceNotFoundException;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,7 +26,7 @@ public class CourseRegistrationService {
         this.fromAddress = fromAddress;
     }
 
-    public void register(Long courseId, CourseRegistrationRequest request) {
+    public void register(UUID courseId, CourseRegistrationRequest request) {
         Course course = courseRepository.findWithTariffsById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course with id " + courseId + " not found"));
 

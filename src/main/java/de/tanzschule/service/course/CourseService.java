@@ -3,6 +3,7 @@ package de.tanzschule.service.course;
 import de.tanzschule.service.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,7 @@ public class CourseService {
     private final CourseTariffRepository courseTariffRepository;
 
     @Transactional(readOnly = true)
-    public CourseResponse findById(Long id) {
+    public CourseResponse findById(UUID id) {
         Course course = courseRepository.findWithTariffsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course with id " + id + " not found"));
         return CourseResponse.from(course);
@@ -52,7 +53,7 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseResponse update(Long id, CourseRequest request) {
+    public CourseResponse update(UUID id, CourseRequest request) {
         Course course = courseRepository.findWithTariffsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course with id " + id + " not found"));
 
@@ -84,10 +85,10 @@ public class CourseService {
     }
 
     @Transactional
-    public List<CourseResponse> reorder(List<Long> orderedIds) {
+    public List<CourseResponse> reorder(List<UUID> orderedIds) {
         List<Course> courses = courseRepository.findAllById(orderedIds);
         for (int i = 0; i < orderedIds.size(); i++) {
-            Long courseId = orderedIds.get(i);
+            UUID courseId = orderedIds.get(i);
             Course course = courses.stream()
                     .filter(c -> c.getId().equals(courseId))
                     .findFirst()
@@ -101,7 +102,7 @@ public class CourseService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Course course = courseRepository.findWithTariffsById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course with id " + id + " not found"));
         courseTariffRepository.deleteAllByCourseId(id);

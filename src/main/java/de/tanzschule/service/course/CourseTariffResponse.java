@@ -3,12 +3,13 @@ package de.tanzschule.service.course;
 import de.tanzschule.service.common.BaseResponse;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record CourseTariffResponse(
-        Long id,
+        UUID id,
         String name,
         BigDecimal price,
-        Long courseId,
+        UUID courseId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) implements BaseResponse {

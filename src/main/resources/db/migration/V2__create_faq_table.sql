@@ -1,5 +1,5 @@
 CREATE TABLE faq (
-    id            BIGSERIAL    PRIMARY KEY,
+    id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     question      TEXT         NOT NULL,
     answer        TEXT         NOT NULL,
     display_order INTEGER      NOT NULL DEFAULT 0,

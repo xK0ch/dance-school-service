@@ -1,9 +1,10 @@
 package de.tanzschule.service.faq;
 
 import java.util.List;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FaqRepository extends JpaRepository<Faq, Long> {
+public interface FaqRepository extends JpaRepository<Faq, UUID> {
 
     List<Faq> findAllByOrderByDisplayOrderAsc();
 }

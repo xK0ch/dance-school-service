@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,7 +73,7 @@ class CourseIntegrationTest {
                 .andExpect(jsonPath("$.name").value("Erwachsene"))
                 .andReturn().getResponse().getContentAsString();
 
-        Long categoryId = objectMapper.readTree(categoryResponse).get("id").asLong();
+        String categoryId = objectMapper.readTree(categoryResponse).get("id").asText();
 
         // Create course with tariffs
         CourseRequest courseRequest = new CourseRequest(
@@ -84,7 +85,7 @@ class CourseIntegrationTest {
                 "Uwe Höftmann",
                 "Anfängerkurs für Paare",
                 true,
-                categoryId,
+                UUID.fromString(categoryId),
                 List.of(
                         new CourseTariffRequest("Normal", new BigDecimal("78.00")),
                         new CourseTariffRequest("Wiederholer", new BigDecimal("65.00"))
@@ -104,7 +105,7 @@ class CourseIntegrationTest {
                 .andExpect(jsonPath("$.tariffs[0].price").value(78.00))
                 .andReturn().getResponse().getContentAsString();
 
-        Long courseId = objectMapper.readTree(courseResponse).get("id").asLong();
+        String courseId = objectMapper.readTree(courseResponse).get("id").asText();
 
         // Read course by ID (public)
         mockMvc.perform(get("/api/courses/" + courseId))
@@ -129,7 +130,7 @@ class CourseIntegrationTest {
                 "Tabea Höftmann",
                 "Neuer Termin",
                 true,
-                categoryId,
+                UUID.fromString(categoryId),
                 List.of(new CourseTariffRequest("Normal", new BigDecimal("85.00")))
         );
 
@@ -157,7 +158,7 @@ class CourseIntegrationTest {
         CourseRequest request = new CourseRequest(
                 "Test", LocalDate.of(2026, 5, 1),
                 LocalTime.of(19, 0), LocalTime.of(20, 0),
-                "4 Stunden", "Test", null, false, 1L, List.of()
+                "4 Stunden", "Test", null, false, UUID.randomUUID(), List.of()
         );
 
         mockMvc.perform(post("/api/courses")

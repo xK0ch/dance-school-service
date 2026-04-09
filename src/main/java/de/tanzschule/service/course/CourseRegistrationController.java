@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ public class CourseRegistrationController {
     @PostMapping("/{id}/register")
     @Operation(summary = "Register for a course", description = "Submit a course registration form (public)")
     @SecurityRequirements
-    public ResponseEntity<Void> register(@PathVariable Long id, @Valid @RequestBody CourseRegistrationRequest request) {
+    public ResponseEntity<Void> register(@PathVariable UUID id, @Valid @RequestBody CourseRegistrationRequest request) {
         registrationService.register(id, request);
         return ResponseEntity.ok().build();
     }

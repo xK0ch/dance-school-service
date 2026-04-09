@@ -3,6 +3,7 @@ package de.tanzschule.service.course;
 import de.tanzschule.service.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ public class CourseCategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CourseCategoryResponse findById(Long id) {
+    public CourseCategoryResponse findById(UUID id) {
         CourseCategory category = courseCategoryRepository.findWithCoursesById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + id + " not found"));
         return CourseCategoryResponse.from(category);
@@ -34,7 +35,7 @@ public class CourseCategoryService {
     }
 
     @Transactional
-    public CourseCategoryResponse update(Long id, CourseCategoryRequest request) {
+    public CourseCategoryResponse update(UUID id, CourseCategoryRequest request) {
         CourseCategory category = courseCategoryRepository.findWithCoursesById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + id + " not found"));
         category.setName(request.name());
@@ -44,17 +45,17 @@ public class CourseCategoryService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         CourseCategory category = courseCategoryRepository.findWithCoursesById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + id + " not found"));
         courseCategoryRepository.delete(category);
     }
 
     @Transactional
-    public List<CourseCategoryResponse> reorder(List<Long> orderedIds) {
+    public List<CourseCategoryResponse> reorder(List<UUID> orderedIds) {
         List<CourseCategory> categories = courseCategoryRepository.findAllById(orderedIds);
         for (int i = 0; i < orderedIds.size(); i++) {
-            Long categoryId = orderedIds.get(i);
+            UUID categoryId = orderedIds.get(i);
             CourseCategory category = categories.stream()
                     .filter(c -> c.getId().equals(categoryId))
                     .findFirst()

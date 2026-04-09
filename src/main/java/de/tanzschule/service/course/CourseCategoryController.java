@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +36,7 @@ public class CourseCategoryController {
     @GetMapping("/{id}")
     @Operation(summary = "Get course category by ID", description = "Returns a single course category with its courses")
     @SecurityRequirements
-    public CourseCategoryResponse getById(@PathVariable Long id) {
+    public CourseCategoryResponse getById(@PathVariable UUID id) {
         return courseCategoryService.findById(id);
     }
 
@@ -48,20 +49,20 @@ public class CourseCategoryController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update course category", description = "Update an existing course category (requires authentication)")
-    public CourseCategoryResponse update(@PathVariable Long id, @Valid @RequestBody CourseCategoryRequest request) {
+    public CourseCategoryResponse update(@PathVariable UUID id, @Valid @RequestBody CourseCategoryRequest request) {
         return courseCategoryService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete course category", description = "Delete a course category (requires authentication)")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         courseCategoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/reorder")
     @Operation(summary = "Reorder course categories", description = "Reorder categories by providing a list of IDs in the desired order (requires authentication)")
-    public List<CourseCategoryResponse> reorder(@RequestBody List<Long> orderedIds) {
+    public List<CourseCategoryResponse> reorder(@RequestBody List<UUID> orderedIds) {
         return courseCategoryService.reorder(orderedIds);
     }
 }
