@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,9 +28,12 @@ public class CourseCategoryController {
     private final CourseCategoryService courseCategoryService;
 
     @GetMapping
-    @Operation(summary = "Get all course categories", description = "Returns all course categories with their courses, sorted by display order")
+    @Operation(summary = "Get course categories", description = "Returns course categories with their courses, sorted by display order. Optionally filter by category IDs.")
     @SecurityRequirements
-    public List<CourseCategoryResponse> getAll() {
+    public List<CourseCategoryResponse> getAll(@RequestParam(required = false) List<UUID> ids) {
+        if (ids != null && !ids.isEmpty()) {
+            return courseCategoryService.findByIds(ids);
+        }
         return courseCategoryService.findAll();
     }
 

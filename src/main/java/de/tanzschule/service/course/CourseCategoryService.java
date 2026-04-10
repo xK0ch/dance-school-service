@@ -22,6 +22,13 @@ public class CourseCategoryService {
     }
 
     @Transactional(readOnly = true)
+    public List<CourseCategoryResponse> findByIds(List<UUID> ids) {
+        return courseCategoryRepository.findByIdInOrderByDisplayOrderAsc(ids).stream()
+                .map(CourseCategoryResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public CourseCategoryResponse findById(UUID id) {
         CourseCategory category = courseCategoryRepository.findWithCoursesById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course category with id " + id + " not found"));

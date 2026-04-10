@@ -12,5 +12,8 @@ public interface CourseCategoryRepository extends JpaRepository<CourseCategory, 
     List<CourseCategory> findAllByOrderByDisplayOrderAsc();
 
     @EntityGraph(attributePaths = "courses")
+    List<CourseCategory> findByIdInOrderByDisplayOrderAsc(List<UUID> ids);
+
+    @EntityGraph(attributePaths = "courses")
     Optional<CourseCategory> findWithCoursesById(UUID id);
 }
