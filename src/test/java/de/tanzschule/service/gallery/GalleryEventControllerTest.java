@@ -140,7 +140,7 @@ class GalleryEventControllerTest {
 
     @Test
     @WithMockUser
-    void uploadImage_authenticated_returns201() throws Exception {
+    void uploadImages_authenticated_returns201() throws Exception {
         GalleryEvent event = new GalleryEvent("Summer Party", LocalDate.of(2026, 7, 15));
         when(galleryEventService.findById(eq(eventId))).thenReturn(event);
 
@@ -149,11 +149,11 @@ class GalleryEventControllerTest {
         when(imageService.upload(any(), any(GalleryEvent.class))).thenReturn(created);
 
         MockMultipartFile file = new MockMultipartFile(
-                "file", "photo.jpg", "image/jpeg", "fake-image-data".getBytes());
+                "files", "photo.jpg", "image/jpeg", "fake-image-data".getBytes());
 
         mockMvc.perform(multipart("/api/gallery-events/" + eventId + "/images").file(file).with(csrf()))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.originalFilename").value("photo.jpg"));
+                .andExpect(jsonPath("$[0].originalFilename").value("photo.jpg"));
     }
 
     @Test

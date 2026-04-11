@@ -82,17 +82,17 @@ class GalleryEventIntegrationTest {
 
         // Upload image to event
         MockMultipartFile file = new MockMultipartFile(
-                "file", "test-photo.jpg", "image/jpeg", "fake-jpeg-data".getBytes());
+                "files", "test-photo.jpg", "image/jpeg", "fake-jpeg-data".getBytes());
 
         String uploadResponse = mockMvc.perform(multipart("/api/gallery-events/" + eventId + "/images")
                         .file(file)
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.originalFilename").value("test-photo.jpg"))
-                .andExpect(jsonPath("$.galleryEventId").value(eventId))
+                .andExpect(jsonPath("$[0].originalFilename").value("test-photo.jpg"))
+                .andExpect(jsonPath("$[0].galleryEventId").value(eventId))
                 .andReturn().getResponse().getContentAsString();
 
-        String imageId = objectMapper.readTree(uploadResponse).get("id").asText();
+        String imageId = objectMapper.readTree(uploadResponse).get(0).get("id").asText();
 
         // Get event with images (public)
         mockMvc.perform(get("/api/gallery-events/" + eventId))
@@ -157,7 +157,7 @@ class GalleryEventIntegrationTest {
         String eventId = objectMapper.readTree(createResponse).get("id").asText();
 
         MockMultipartFile file = new MockMultipartFile(
-                "file", "document.pdf", "application/pdf", "pdf-data".getBytes());
+                "files", "document.pdf", "application/pdf", "pdf-data".getBytes());
 
         mockMvc.perform(multipart("/api/gallery-events/" + eventId + "/images")
                         .file(file)
@@ -177,20 +177,18 @@ class GalleryEventIntegrationTest {
 
         String eventId = objectMapper.readTree(createResponse).get("id").asText();
 
-        // Upload two images
+        // Upload two images in one request
         MockMultipartFile file1 = new MockMultipartFile(
-                "file", "photo1.jpg", "image/jpeg", "data1".getBytes());
+                "files", "photo1.jpg", "image/jpeg", "data1".getBytes());
         MockMultipartFile file2 = new MockMultipartFile(
-                "file", "photo2.png", "image/png", "data2".getBytes());
+                "files", "photo2.png", "image/png", "data2".getBytes());
 
         mockMvc.perform(multipart("/api/gallery-events/" + eventId + "/images")
                         .file(file1)
-                        .header("Authorization", "Bearer " + adminToken))
-                .andExpect(status().isCreated());
-        mockMvc.perform(multipart("/api/gallery-events/" + eventId + "/images")
                         .file(file2)
                         .header("Authorization", "Bearer " + adminToken))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.length()").value(2));
 
         // Delete event (should cascade to images)
         mockMvc.perform(delete("/api/gallery-events/" + eventId)

@@ -74,14 +74,17 @@ public class GalleryEventController {
     }
 
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload image to gallery event", description = "Upload a new image to a gallery event (requires authentication)")
-    public ResponseEntity<ImageResponse> uploadImage(
+    @Operation(summary = "Upload images to gallery event", description = "Upload one or more images to a gallery event (requires authentication)")
+    public ResponseEntity<List<ImageResponse>> uploadImages(
             @PathVariable UUID id,
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam("files") List<MultipartFile> files) throws IOException {
         GalleryEvent event = galleryEventService.findById(id);
-        Image created = imageService.upload(file, event);
-        ImageResponse response = ImageResponse.from(created);
-        return ResponseEntity.created(URI.create("/api/gallery-events/" + id + "/images/" + created.getId())).body(response);
+        List<ImageResponse> responses = new java.util.ArrayList<>();
+        for (MultipartFile file : files) {
+            Image created = imageService.upload(file, event);
+            responses.add(ImageResponse.from(created));
+        }
+        return ResponseEntity.status(201).body(responses);
     }
 
     @DeleteMapping("/{id}/images/{imageId}")
