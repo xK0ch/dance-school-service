@@ -12,6 +12,7 @@ public record ImageResponse(
         long fileSize,
         int displayOrder,
         UUID galleryEventId,
+        UUID newsId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) implements BaseResponse {
@@ -25,6 +26,7 @@ public record ImageResponse(
                 image.getFileSize(),
                 image.getDisplayOrder(),
                 image.getGalleryEvent() != null ? image.getGalleryEvent().getId() : null,
+                image.getNews() != null ? image.getNews().getId() : null,
                 image.getCreatedAt(),
                 image.getUpdatedAt()
         );

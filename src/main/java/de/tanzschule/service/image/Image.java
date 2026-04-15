@@ -2,6 +2,7 @@ package de.tanzschule.service.image;
 
 import de.tanzschule.service.common.BaseEntity;
 import de.tanzschule.service.gallery.GalleryEvent;
+import de.tanzschule.service.news.News;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,6 +38,10 @@ public class Image extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gallery_event_id")
     private GalleryEvent galleryEvent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "news_id")
+    private News news;
 
     public Image(String filename, String originalFilename, String contentType, long fileSize, int displayOrder) {
         super();

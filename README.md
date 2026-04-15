@@ -238,6 +238,60 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 }
 ```
 
+### News
+
+| Method | Endpoint                          | Auth     | Description                              |
+|--------|-----------------------------------|----------|------------------------------------------|
+| GET    | `/api/news`                       | Public   | Get all news (sorted by display order)   |
+| GET    | `/api/news/{id}`                  | Public   | Get news by ID                           |
+| POST   | `/api/news`                       | Required | Create a new news entry                  |
+| PUT    | `/api/news/{id}`                  | Required | Update a news entry                      |
+| DELETE | `/api/news/{id}`                  | Required | Delete a news entry and its image        |
+| POST   | `/api/news/{id}/image`            | Required | Upload/replace news image (multipart)    |
+| DELETE | `/api/news/{id}/image`            | Required | Delete news image                        |
+| GET    | `/api/news/{id}/image/download`   | Public   | Download/display news image file         |
+| PUT    | `/api/news/reorder`               | Required | Reorder news by list of IDs              |
+
+**News Request:**
+```json
+{
+  "title": "Summer Dance Party",
+  "description": "Join us for a fun evening of dancing!",
+  "displayOrder": 0
+}
+```
+
+**News Response:**
+```json
+{
+  "id": "a1b2c3d4-...",
+  "title": "Summer Dance Party",
+  "description": "Join us for a fun evening of dancing!",
+  "image": {
+    "id": "b2c3d4e5-...",
+    "filename": "a1b2c3d4-...-e5f6.jpg",
+    "originalFilename": "party.jpg",
+    "contentType": "image/jpeg",
+    "fileSize": 204800,
+    "displayOrder": 0,
+    "newsId": "a1b2c3d4-...",
+    "createdAt": "2026-04-13T12:00:00",
+    "updatedAt": "2026-04-13T12:00:00"
+  },
+  "displayOrder": 0,
+  "createdAt": "2026-04-13T12:00:00",
+  "updatedAt": "2026-04-13T12:00:00"
+}
+```
+
+**Upload Request (multipart/form-data):**
+```
+POST /api/news/{id}/image
+Content-Type: multipart/form-data
+
+file: <image file (JPEG, PNG, GIF, WebP)>
+```
+
 ### Contact
 
 | Method | Endpoint        | Auth   | Description                          |
@@ -388,6 +442,13 @@ src/main/java/de/tanzschule/service/
 │   ├── CourseTariffRepository.java
 │   ├── CourseTariffRequest.java
 │   └── CourseTariffResponse.java
+├── news/
+│   ├── News.java
+│   ├── NewsRepository.java
+│   ├── NewsService.java
+│   ├── NewsController.java
+│   ├── NewsRequest.java
+│   └── NewsResponse.java
 ├── contact/
 │   ├── ContactRequest.java
 │   ├── ContactService.java
@@ -410,3 +471,4 @@ Flyway migrations are located in `src/main/resources/db/migration/`:
 | `V5__create_course_category_table.sql` | Course category table |
 | `V6__create_course_table.sql` | Course table with FK to course_category |
 | `V7__create_course_tariff_table.sql` | Course tariff table with FK to course |
+| `V8__create_news_table.sql` | News table with image metadata |
