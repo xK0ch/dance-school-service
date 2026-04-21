@@ -467,8 +467,8 @@ Flyway migrations are located in `src/main/resources/db/migration/`:
 | `V1__create_admin_user_table.sql` | Admin user table |
 | `V2__create_faq_table.sql` | FAQ table with display_order |
 | `V3__create_gallery_event_table.sql` | Gallery event table |
-| `V4__create_image_table.sql` | Image table with FK to gallery_event |
-| `V5__create_course_category_table.sql` | Course category table |
-| `V6__create_course_table.sql` | Course table with FK to course_category |
-| `V7__create_course_tariff_table.sql` | Course tariff table with FK to course |
-| `V8__create_news_table.sql` | News table with image metadata |
+| `V4__create_news_table.sql` | News table |
+| `V5__create_image_table.sql` | Image table with FKs to gallery_event and news |
+| `V6__create_course_category_table.sql` | Course category table |
+| `V7__create_course_table.sql` | Course table with FK to course_category |
+| `V8__create_course_tariff_table.sql` | Course tariff table with FK to course |

@@ -6,5 +6,3 @@ CREATE TABLE news (
     created_at    TIMESTAMP    NOT NULL DEFAULT now(),
     updated_at    TIMESTAMP    NOT NULL DEFAULT now()
 );
-
-ALTER TABLE image ADD COLUMN news_id UUID REFERENCES news(id);

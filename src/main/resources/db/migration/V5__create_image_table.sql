@@ -6,6 +6,7 @@ CREATE TABLE image (
     file_size BIGINT NOT NULL,
     display_order INTEGER NOT NULL DEFAULT 0,
     gallery_event_id UUID REFERENCES gallery_event(id),
+    news_id UUID REFERENCES news(id),
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
