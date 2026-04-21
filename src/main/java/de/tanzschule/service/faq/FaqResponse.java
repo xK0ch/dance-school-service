@@ -1,16 +1,18 @@
 package de.tanzschule.service.faq;
 
 import de.tanzschule.service.common.BaseResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record FaqResponse(
-        UUID id,
-        String question,
-        String answer,
-        int displayOrder,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        @NotNull UUID id,
+        @NotNull String question,
+        @NotNull String answer,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int displayOrder,
+        @NotNull LocalDateTime createdAt,
+        @NotNull LocalDateTime updatedAt
 ) implements BaseResponse {
 
     public static FaqResponse from(Faq faq) {

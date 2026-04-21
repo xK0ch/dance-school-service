@@ -1,17 +1,19 @@
 package de.tanzschule.service.course;
 
 import de.tanzschule.service.common.BaseResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public record CourseCategoryResponse(
-        UUID id,
-        String name,
-        int displayOrder,
-        List<CourseResponse> courses,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        @NotNull UUID id,
+        @NotNull String name,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int displayOrder,
+        @NotNull List<CourseResponse> courses,
+        @NotNull LocalDateTime createdAt,
+        @NotNull LocalDateTime updatedAt
 ) implements BaseResponse {
 
     public static CourseCategoryResponse from(CourseCategory category) {

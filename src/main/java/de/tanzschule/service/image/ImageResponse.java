@@ -1,20 +1,22 @@
 package de.tanzschule.service.image;
 
 import de.tanzschule.service.common.BaseResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ImageResponse(
-        UUID id,
-        String filename,
-        String originalFilename,
-        String contentType,
-        long fileSize,
-        int displayOrder,
+        @NotNull UUID id,
+        @NotNull String filename,
+        @NotNull String originalFilename,
+        @NotNull String contentType,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) long fileSize,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int displayOrder,
         UUID galleryEventId,
         UUID newsId,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        @NotNull LocalDateTime createdAt,
+        @NotNull LocalDateTime updatedAt
 ) implements BaseResponse {
 
     public static ImageResponse from(Image image) {

@@ -1,7 +1,9 @@
 package de.tanzschule.service.auth;
 
+import jakarta.validation.constraints.NotNull;
+
 public record LoginResponse(
-        String token,
-        String username
+        @NotNull String token,
+        @NotNull String username
 ) {
 }

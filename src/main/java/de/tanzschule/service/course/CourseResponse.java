@@ -1,6 +1,8 @@
 package de.tanzschule.service.course;
 
 import de.tanzschule.service.common.BaseResponse;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -8,20 +10,20 @@ import java.util.List;
 import java.util.UUID;
 
 public record CourseResponse(
-        UUID id,
-        String name,
-        LocalDate startDate,
-        LocalTime startTime,
-        LocalTime endTime,
-        String numberOfHours,
-        String teacher,
+        @NotNull UUID id,
+        @NotNull String name,
+        @NotNull LocalDate startDate,
+        @NotNull LocalTime startTime,
+        @NotNull LocalTime endTime,
+        @NotNull String numberOfHours,
+        @NotNull String teacher,
         String remark,
-        boolean partnerOption,
-        int displayOrder,
-        UUID categoryId,
-        List<CourseTariffResponse> tariffs,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) boolean partnerOption,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int displayOrder,
+        @NotNull UUID categoryId,
+        @NotNull List<CourseTariffResponse> tariffs,
+        @NotNull LocalDateTime createdAt,
+        @NotNull LocalDateTime updatedAt
 ) implements BaseResponse {
 
     public static CourseResponse from(Course course) {

@@ -21,11 +21,9 @@ REST API backend for the Tanzschule Family & Friends web application.
 
 ### Local Development
 
-1. Create a PostgreSQL database:
-   ```sql
-   CREATE DATABASE tanzschule;
-   CREATE USER tanzschule WITH PASSWORD 'tanzschule';
-   GRANT ALL PRIVILEGES ON DATABASE tanzschule TO tanzschule;
+1. Start a local PostgreSQL instance via Docker:
+   ```bash
+   docker run --rm -d --name tanzschule-db -p 5432:5432 -e POSTGRES_DB=tanzschule -e POSTGRES_USER=tanzschule -e POSTGRES_PASSWORD=tanzschule postgres:17-alpine
    ```
 
 2. Run the application:
@@ -38,14 +36,6 @@ REST API backend for the Tanzschule Family & Friends web application.
    ```bash
    ./gradlew test
    ```
-
-### Docker
-
-Start the full stack (PostgreSQL + Backend):
-
-```bash
-docker compose -f docker-compose-tanzschule-family-and-friends-service.yml up --build -d
-```
 
 ## API Endpoints
 
@@ -314,6 +304,38 @@ Authenticated endpoints require a `Bearer` token in the `Authorization` header:
 ```
 Authorization: Bearer eyJhbGciOi...
 ```
+
+## API Documentation (OpenAPI / Swagger)
+
+The API is documented using OpenAPI 3 via `springdoc-openapi`. When the application is running, the following endpoints are available:
+
+| Endpoint             | Description                                  |
+|----------------------|----------------------------------------------|
+| `/v3/api-docs`       | OpenAPI specification as JSON                |
+| `/v3/api-docs.yaml`  | OpenAPI specification as YAML                |
+| `/swagger-ui.html`   | Interactive Swagger UI                       |
+
+### Generating the OpenAPI JSON file
+
+The `org.springdoc.openapi-gradle-plugin` is configured to start the application, fetch `/v3/api-docs`, and write the result to a file:
+
+```bash
+./gradlew generateOpenApiDocs
+```
+
+The generated file is written to:
+
+```
+build/openapi/openapi.json
+```
+
+This file is intended to be committed to the frontend repository and used by `ng-openapi-gen` to generate type-safe Angular services from the API contract.
+
+### Conventions
+
+- Each controller is annotated with `@Tag(name = "...", description = "...")` — the tag name determines the Angular service name in the generated frontend client (e.g. `Tag("News")` → `NewsService`).
+- Public endpoints (e.g. login, contact) are annotated with `@SecurityRequirements` (empty) to opt out of the global JWT requirement.
+- DTOs (request/response records) and field validation constraints (`@NotNull`, `@Size`, …) are picked up automatically and reflected in the spec.
 
 ## CI/CD (Jenkins)
 

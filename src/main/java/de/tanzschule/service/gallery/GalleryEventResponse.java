@@ -2,18 +2,19 @@ package de.tanzschule.service.gallery;
 
 import de.tanzschule.service.common.BaseResponse;
 import de.tanzschule.service.image.ImageResponse;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public record GalleryEventResponse(
-        UUID id,
-        String name,
-        LocalDate date,
-        List<ImageResponse> images,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        @NotNull UUID id,
+        @NotNull String name,
+        @NotNull LocalDate date,
+        @NotNull List<ImageResponse> images,
+        @NotNull LocalDateTime createdAt,
+        @NotNull LocalDateTime updatedAt
 ) implements BaseResponse {
 
     public static GalleryEventResponse from(GalleryEvent event) {
