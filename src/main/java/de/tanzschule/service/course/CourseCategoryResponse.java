@@ -1,7 +1,6 @@
 package de.tanzschule.service.course;
 
 import de.tanzschule.service.common.BaseResponse;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.UUID;
 public record CourseCategoryResponse(
         @NotNull UUID id,
         @NotNull String name,
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int displayOrder,
+        @NotNull Integer displayOrder,
         @NotNull List<CourseResponse> courses,
         @NotNull LocalDateTime createdAt,
         @NotNull LocalDateTime updatedAt

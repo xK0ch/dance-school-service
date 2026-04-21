@@ -1,7 +1,6 @@
 package de.tanzschule.service.course;
 
 import de.tanzschule.service.common.BaseResponse;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,8 +17,8 @@ public record CourseResponse(
         @NotNull String numberOfHours,
         @NotNull String teacher,
         String remark,
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) boolean partnerOption,
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int displayOrder,
+        @NotNull Boolean partnerOption,
+        @NotNull Integer displayOrder,
         @NotNull UUID categoryId,
         @NotNull List<CourseTariffResponse> tariffs,
         @NotNull LocalDateTime createdAt,

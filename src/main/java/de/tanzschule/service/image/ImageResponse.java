@@ -1,7 +1,6 @@
 package de.tanzschule.service.image;
 
 import de.tanzschule.service.common.BaseResponse;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -11,8 +10,8 @@ public record ImageResponse(
         @NotNull String filename,
         @NotNull String originalFilename,
         @NotNull String contentType,
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) long fileSize,
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int displayOrder,
+        @NotNull Long fileSize,
+        @NotNull Integer displayOrder,
         UUID galleryEventId,
         UUID newsId,
         @NotNull LocalDateTime createdAt,
