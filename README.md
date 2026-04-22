@@ -228,6 +228,53 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 }
 ```
 
+### Events
+
+| Method | Endpoint              | Auth     | Description                                  |
+|--------|-----------------------|----------|----------------------------------------------|
+| GET    | `/api/events`         | Public   | Get all events (sorted by date, display order) |
+| GET    | `/api/events/{id}`    | Public   | Get event by ID with its time ranges         |
+| POST   | `/api/events`         | Required | Create a new event (with optional time ranges) |
+| PUT    | `/api/events/{id}`    | Required | Update an event (replaces time ranges)       |
+| DELETE | `/api/events/{id}`    | Required | Delete an event and all its time ranges      |
+| PUT    | `/api/events/reorder` | Required | Reorder events by list of IDs                |
+
+**Event Request:**
+```json
+{
+  "name": "Silvesterball",
+  "date": "2026-12-31",
+  "entryCost": 15.00,
+  "entryCostWithCustomerCard": 10.00,
+  "remark": "Dresscode: festlich",
+  "timeRanges": [
+    { "startTime": "18:00", "endTime": "20:00" },
+    { "startTime": "21:00", "endTime": "23:59" }
+  ]
+}
+```
+
+Only `name` and `date` are required. `entryCost`, `entryCostWithCustomerCard`, `remark`, and the `timeRanges` list are all optional — an event can have zero, one, or several time ranges.
+
+**Event Response:**
+```json
+{
+  "id": "a1b2c3d4-...",
+  "name": "Silvesterball",
+  "date": "2026-12-31",
+  "entryCost": 15.00,
+  "entryCostWithCustomerCard": 10.00,
+  "remark": "Dresscode: festlich",
+  "displayOrder": 0,
+  "timeRanges": [
+    { "id": "b2c3d4e5-...", "startTime": "18:00:00", "endTime": "20:00:00", "eventId": "a1b2c3d4-...", "createdAt": "...", "updatedAt": "..." },
+    { "id": "c3d4e5f6-...", "startTime": "21:00:00", "endTime": "23:59:00", "eventId": "a1b2c3d4-...", "createdAt": "...", "updatedAt": "..." }
+  ],
+  "createdAt": "2026-04-22T12:00:00",
+  "updatedAt": "2026-04-22T12:00:00"
+}
+```
+
 ### News
 
 | Method | Endpoint                          | Auth     | Description                              |
@@ -447,6 +494,17 @@ src/main/java/de/tanzschule/service/
 │   ├── ImageRepository.java
 │   ├── ImageService.java
 │   └── ImageResponse.java
+├── event/
+│   ├── Event.java
+│   ├── EventController.java
+│   ├── EventRepository.java
+│   ├── EventRequest.java
+│   ├── EventResponse.java
+│   ├── EventService.java
+│   ├── EventTimeRange.java
+│   ├── EventTimeRangeRepository.java
+│   ├── EventTimeRangeRequest.java
+│   └── EventTimeRangeResponse.java
 ├── course/
 │   ├── Course.java
 │   ├── CourseCategory.java
@@ -494,3 +552,5 @@ Flyway migrations are located in `src/main/resources/db/migration/`:
 | `V6__create_course_category_table.sql` | Course category table |
 | `V7__create_course_table.sql` | Course table with FK to course_category |
 | `V8__create_course_tariff_table.sql` | Course tariff table with FK to course |
+| `V9__create_event_table.sql` | Event table (name, date, optional entry costs, remark, display order) |
+| `V10__create_event_time_range_table.sql` | Event time range table with FK to event (multiple per event) |
