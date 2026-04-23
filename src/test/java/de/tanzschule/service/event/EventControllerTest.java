@@ -68,7 +68,6 @@ class EventControllerTest {
                 new BigDecimal("15.00"),
                 new BigDecimal("10.00"),
                 "Silvesterball",
-                0,
                 List.of(timeRange),
                 LocalDateTime.now(),
                 LocalDateTime.now()
@@ -192,16 +191,4 @@ class EventControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    @WithMockUser
-    void reorder_authenticated_returns200() throws Exception {
-        List<UUID> orderedIds = List.of(id, UUID.randomUUID());
-        when(eventService.reorder(any())).thenReturn(List.of(sampleResponse));
-
-        mockMvc.perform(put("/api/events/reorder")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderedIds)))
-                .andExpect(status().isOk());
-    }
 }

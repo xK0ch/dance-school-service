@@ -27,7 +27,7 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping
-    @Operation(operationId = "getAllEvents", summary = "Get all events", description = "Returns all events ordered by date and display order")
+    @Operation(operationId = "getAllEvents", summary = "Get all events", description = "Returns all events ordered by date")
     @SecurityRequirements
     public List<EventResponse> getAll() {
         return eventService.findAll();
@@ -58,11 +58,5 @@ public class EventController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         eventService.delete(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/reorder")
-    @Operation(operationId = "reorderEvents", summary = "Reorder events", description = "Reorder events by providing a list of IDs in the desired order (requires authentication)")
-    public List<EventResponse> reorder(@RequestBody List<UUID> orderedIds) {
-        return eventService.reorder(orderedIds);
     }
 }

@@ -17,7 +17,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public List<EventResponse> findAll() {
-        return eventRepository.findAllByOrderByDateAscDisplayOrderAsc().stream()
+        return eventRepository.findAllByOrderByDateAsc().stream()
                 .map(EventResponse::from)
                 .toList();
     }
@@ -82,23 +82,6 @@ public class EventService {
 
         Event saved = eventRepository.findWithTimeRangesById(event.getId()).orElseThrow();
         return EventResponse.from(saved);
-    }
-
-    @Transactional
-    public List<EventResponse> reorder(List<UUID> orderedIds) {
-        List<Event> events = eventRepository.findAllById(orderedIds);
-        for (int i = 0; i < orderedIds.size(); i++) {
-            UUID eventId = orderedIds.get(i);
-            Event event = events.stream()
-                    .filter(e -> e.getId().equals(eventId))
-                    .findFirst()
-                    .orElseThrow(() -> new ResourceNotFoundException("Event with id " + eventId + " not found"));
-            event.setDisplayOrder(i);
-            event.setUpdatedAt(LocalDateTime.now());
-        }
-        return eventRepository.saveAll(events).stream()
-                .map(EventResponse::from)
-                .toList();
     }
 
     @Transactional

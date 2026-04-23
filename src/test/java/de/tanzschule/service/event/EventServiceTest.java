@@ -51,7 +51,7 @@ class EventServiceTest {
 
     @Test
     void findAll_returnsAllEvents() {
-        when(eventRepository.findAllByOrderByDateAscDisplayOrderAsc()).thenReturn(List.of(sampleEvent));
+        when(eventRepository.findAllByOrderByDateAsc()).thenReturn(List.of(sampleEvent));
 
         List<EventResponse> result = eventService.findAll();
 
@@ -175,41 +175,4 @@ class EventServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class);
     }
 
-    @Test
-    void reorder_updatesDisplayOrder() {
-        UUID id1 = UUID.randomUUID();
-        UUID id2 = UUID.randomUUID();
-
-        Event event1 = new Event("A", LocalDate.of(2026, 1, 1), null, null, null);
-        Event event2 = new Event("B", LocalDate.of(2026, 2, 1), null, null, null);
-        // Set ids via reflection-free workaround: use repository mocks
-        // Since Event ids are generated, we check via repository interaction
-        when(eventRepository.findAllById(List.of(id1, id2))).thenReturn(List.of(event1, event2));
-        when(eventRepository.saveAll(any())).thenReturn(List.of(event1, event2));
-
-        // Inject ids through reflection — alternative: just verify saveAll called
-        try {
-            java.lang.reflect.Field idField = de.tanzschule.service.common.BaseEntity.class.getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(event1, id1);
-            idField.set(event2, id2);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        List<EventResponse> result = eventService.reorder(List.of(id1, id2));
-
-        assertThat(result).hasSize(2);
-        assertThat(event1.getDisplayOrder()).isEqualTo(0);
-        assertThat(event2.getDisplayOrder()).isEqualTo(1);
-    }
-
-    @Test
-    void reorder_nonExistingId_throwsException() {
-        UUID missing = UUID.randomUUID();
-        when(eventRepository.findAllById(List.of(missing))).thenReturn(List.of());
-
-        assertThatThrownBy(() -> eventService.reorder(List.of(missing)))
-                .isInstanceOf(ResourceNotFoundException.class);
-    }
 }

@@ -15,7 +15,6 @@ public record EventResponse(
         BigDecimal entryCost,
         BigDecimal entryCostWithCustomerCard,
         String remark,
-        @NotNull Integer displayOrder,
         @NotNull List<EventTimeRangeResponse> timeRanges,
         @NotNull LocalDateTime createdAt,
         @NotNull LocalDateTime updatedAt
@@ -29,7 +28,6 @@ public record EventResponse(
                 event.getEntryCost(),
                 event.getEntryCostWithCustomerCard(),
                 event.getRemark(),
-                event.getDisplayOrder(),
                 event.getTimeRanges().stream()
                         .map(EventTimeRangeResponse::from)
                         .toList(),

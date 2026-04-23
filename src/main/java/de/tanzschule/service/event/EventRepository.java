@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @EntityGraph(attributePaths = "timeRanges")
-    List<Event> findAllByOrderByDateAscDisplayOrderAsc();
+    List<Event> findAllByOrderByDateAsc();
+
+    List<Event> findAllByDateBefore(java.time.LocalDate date);
 
     @EntityGraph(attributePaths = "timeRanges")
     Optional<Event> findWithTimeRangesById(UUID id);

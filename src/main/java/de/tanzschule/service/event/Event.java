@@ -36,9 +36,6 @@ public class Event extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String remark;
 
-    @Column(name = "display_order", nullable = false)
-    private int displayOrder;
-
     @OneToMany(mappedBy = "event")
     @OrderBy("startTime ASC")
     @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
