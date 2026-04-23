@@ -37,7 +37,7 @@ public class GalleryEventController {
     private final ImageService imageService;
 
     @GetMapping
-    @Operation(summary = "Get all gallery events", description = "Returns all gallery events sorted by date descending")
+    @Operation(operationId = "getAllGalleryEvents", summary = "Get all gallery events", description = "Returns all gallery events sorted by date descending")
     @SecurityRequirements
     public List<GalleryEventResponse> getAll() {
         return galleryEventService.findAll().stream()
@@ -46,14 +46,14 @@ public class GalleryEventController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get gallery event by ID", description = "Returns a single gallery event with its images")
+    @Operation(operationId = "getGalleryEventById", summary = "Get gallery event by ID", description = "Returns a single gallery event with its images")
     @SecurityRequirements
     public GalleryEventResponse getById(@PathVariable UUID id) {
         return GalleryEventResponse.from(galleryEventService.findById(id));
     }
 
     @PostMapping
-    @Operation(summary = "Create gallery event", description = "Create a new gallery event (requires authentication)")
+    @Operation(operationId = "createGalleryEvent", summary = "Create gallery event", description = "Create a new gallery event (requires authentication)")
     public ResponseEntity<GalleryEventResponse> create(@Valid @RequestBody GalleryEventRequest request) {
         GalleryEvent created = galleryEventService.create(request);
         GalleryEventResponse response = GalleryEventResponse.from(created);
@@ -61,20 +61,20 @@ public class GalleryEventController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update gallery event", description = "Update an existing gallery event (requires authentication)")
+    @Operation(operationId = "updateGalleryEvent", summary = "Update gallery event", description = "Update an existing gallery event (requires authentication)")
     public GalleryEventResponse update(@PathVariable UUID id, @Valid @RequestBody GalleryEventRequest request) {
         return GalleryEventResponse.from(galleryEventService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete gallery event", description = "Delete a gallery event and all its images (requires authentication)")
+    @Operation(operationId = "deleteGalleryEvent", summary = "Delete gallery event", description = "Delete a gallery event and all its images (requires authentication)")
     public ResponseEntity<Void> delete(@PathVariable UUID id) throws IOException {
         galleryEventService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload images to gallery event", description = "Upload one or more images to a gallery event (requires authentication)")
+    @Operation(operationId = "uploadGalleryImages", summary = "Upload images to gallery event", description = "Upload one or more images to a gallery event (requires authentication)")
     public ResponseEntity<List<ImageResponse>> uploadImages(
             @PathVariable UUID id,
             @RequestParam("files") List<MultipartFile> files) throws IOException {
@@ -88,14 +88,14 @@ public class GalleryEventController {
     }
 
     @DeleteMapping("/{id}/images/{imageId}")
-    @Operation(summary = "Delete image from gallery event", description = "Delete a single image from a gallery event (requires authentication)")
+    @Operation(operationId = "deleteGalleryImage", summary = "Delete image from gallery event", description = "Delete a single image from a gallery event (requires authentication)")
     public ResponseEntity<Void> deleteImage(@PathVariable UUID id, @PathVariable UUID imageId) throws IOException {
         imageService.delete(imageId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/images/reorder")
-    @Operation(summary = "Reorder images in gallery event", description = "Reorder images by providing a list of IDs in the desired order (requires authentication)")
+    @Operation(operationId = "reorderGalleryImages", summary = "Reorder images in gallery event", description = "Reorder images by providing a list of IDs in the desired order (requires authentication)")
     public List<ImageResponse> reorderImages(@PathVariable UUID id, @RequestBody List<UUID> orderedIds) {
         return imageService.reorder(id, orderedIds).stream()
                 .map(ImageResponse::from)
@@ -103,7 +103,7 @@ public class GalleryEventController {
     }
 
     @GetMapping("/{id}/images/{imageId}/download")
-    @Operation(summary = "Download image", description = "Returns the image file for display or download")
+    @Operation(operationId = "downloadGalleryImage", summary = "Download image", description = "Returns the image file for display or download")
     @SecurityRequirements
     public ResponseEntity<Resource> downloadImage(@PathVariable UUID id, @PathVariable UUID imageId) throws IOException {
         Image image = imageService.findById(imageId);

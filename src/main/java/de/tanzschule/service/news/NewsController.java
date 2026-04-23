@@ -37,7 +37,7 @@ public class NewsController {
     private final ImageService imageService;
 
     @GetMapping
-    @Operation(summary = "Get all news", description = "Returns all news sorted by display order")
+    @Operation(operationId = "getAllNews", summary = "Get all news", description = "Returns all news sorted by display order")
     @SecurityRequirements
     public List<NewsResponse> getAll() {
         return newsService.findAll().stream()
@@ -46,7 +46,7 @@ public class NewsController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get news by ID", description = "Returns a single news entry by its ID")
+    @Operation(operationId = "getNewsById", summary = "Get news by ID", description = "Returns a single news entry by its ID")
     @SecurityRequirements
     public NewsResponse getById(@PathVariable UUID id) {
         News news = newsService.findById(id);
@@ -54,7 +54,7 @@ public class NewsController {
     }
 
     @PostMapping
-    @Operation(summary = "Create news", description = "Create a new news entry (requires authentication)")
+    @Operation(operationId = "createNews", summary = "Create news", description = "Create a new news entry (requires authentication)")
     public ResponseEntity<NewsResponse> create(@Valid @RequestBody NewsRequest request) {
         News created = newsService.create(request);
         NewsResponse response = NewsResponse.from(created, null);
@@ -62,21 +62,21 @@ public class NewsController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update news", description = "Update an existing news entry (requires authentication)")
+    @Operation(operationId = "updateNews", summary = "Update news", description = "Update an existing news entry (requires authentication)")
     public NewsResponse update(@PathVariable UUID id, @Valid @RequestBody NewsRequest request) {
         News updated = newsService.update(id, request);
         return NewsResponse.from(updated, newsService.findImageByNewsId(id));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete news", description = "Delete a news entry and its image (requires authentication)")
+    @Operation(operationId = "deleteNews", summary = "Delete news", description = "Delete a news entry and its image (requires authentication)")
     public ResponseEntity<Void> delete(@PathVariable UUID id) throws IOException {
         newsService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload news image", description = "Upload or replace the image of a news entry (requires authentication)")
+    @Operation(operationId = "uploadNewsImage", summary = "Upload news image", description = "Upload or replace the image of a news entry (requires authentication)")
     public ResponseEntity<ImageResponse> uploadImage(
             @PathVariable UUID id,
             @RequestParam("file") MultipartFile file) throws IOException {
@@ -93,7 +93,7 @@ public class NewsController {
     }
 
     @DeleteMapping("/{id}/image")
-    @Operation(summary = "Delete news image", description = "Delete the image of a news entry (requires authentication)")
+    @Operation(operationId = "deleteNewsImage", summary = "Delete news image", description = "Delete the image of a news entry (requires authentication)")
     public ResponseEntity<Void> deleteImage(@PathVariable UUID id) throws IOException {
         Image image = newsService.findImageByNewsId(id);
         if (image != null) {
@@ -103,7 +103,7 @@ public class NewsController {
     }
 
     @GetMapping("/{id}/image/download")
-    @Operation(summary = "Download news image", description = "Returns the image file for display or download")
+    @Operation(operationId = "downloadNewsImage", summary = "Download news image", description = "Returns the image file for display or download")
     @SecurityRequirements
     public ResponseEntity<Resource> downloadImage(@PathVariable UUID id) throws IOException {
         Image image = newsService.findImageByNewsId(id);
@@ -119,7 +119,7 @@ public class NewsController {
     }
 
     @PutMapping("/reorder")
-    @Operation(summary = "Reorder news", description = "Reorder news by providing a list of IDs in the desired order (requires authentication)")
+    @Operation(operationId = "reorderNews", summary = "Reorder news", description = "Reorder news by providing a list of IDs in the desired order (requires authentication)")
     public List<NewsResponse> reorder(@RequestBody List<UUID> orderedIds) {
         return newsService.reorder(orderedIds).stream()
                 .map(news -> NewsResponse.from(news, newsService.findImageByNewsId(news.getId())))

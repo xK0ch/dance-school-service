@@ -22,7 +22,7 @@ public class CourseRegistrationController {
     private final CourseRegistrationService registrationService;
 
     @PostMapping("/{id}/register")
-    @Operation(summary = "Register for a course", description = "Submit a course registration form (public)")
+    @Operation(operationId = "registerForCourse", summary = "Register for a course", description = "Submit a course registration form (public)")
     @SecurityRequirements
     public ResponseEntity<Void> register(@PathVariable UUID id, @Valid @RequestBody CourseRegistrationRequest request) {
         registrationService.register(id, request);

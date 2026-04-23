@@ -27,41 +27,41 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping
-    @Operation(summary = "Get all events", description = "Returns all events ordered by date and display order")
+    @Operation(operationId = "getAllEvents", summary = "Get all events", description = "Returns all events ordered by date and display order")
     @SecurityRequirements
     public List<EventResponse> getAll() {
         return eventService.findAll();
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get event by ID", description = "Returns a single event with its time ranges")
+    @Operation(operationId = "getEventById", summary = "Get event by ID", description = "Returns a single event with its time ranges")
     @SecurityRequirements
     public EventResponse getById(@PathVariable UUID id) {
         return eventService.findById(id);
     }
 
     @PostMapping
-    @Operation(summary = "Create event", description = "Create a new event with time ranges (requires authentication)")
+    @Operation(operationId = "createEvent", summary = "Create event", description = "Create a new event with time ranges (requires authentication)")
     public ResponseEntity<EventResponse> create(@Valid @RequestBody EventRequest request) {
         EventResponse response = eventService.create(request);
         return ResponseEntity.created(URI.create("/api/events/" + response.id())).body(response);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update event", description = "Update an existing event and its time ranges (requires authentication)")
+    @Operation(operationId = "updateEvent", summary = "Update event", description = "Update an existing event and its time ranges (requires authentication)")
     public EventResponse update(@PathVariable UUID id, @Valid @RequestBody EventRequest request) {
         return eventService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete event", description = "Delete an event and all its time ranges (requires authentication)")
+    @Operation(operationId = "deleteEvent", summary = "Delete event", description = "Delete an event and all its time ranges (requires authentication)")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         eventService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/reorder")
-    @Operation(summary = "Reorder events", description = "Reorder events by providing a list of IDs in the desired order (requires authentication)")
+    @Operation(operationId = "reorderEvents", summary = "Reorder events", description = "Reorder events by providing a list of IDs in the desired order (requires authentication)")
     public List<EventResponse> reorder(@RequestBody List<UUID> orderedIds) {
         return eventService.reorder(orderedIds);
     }

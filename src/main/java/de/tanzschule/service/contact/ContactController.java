@@ -20,7 +20,7 @@ public class ContactController {
     private final ContactService contactService;
 
     @PostMapping
-    @Operation(summary = "Send contact message", description = "Sends a contact form message via email (public)")
+    @Operation(operationId = "sendContactMessage", summary = "Send contact message", description = "Sends a contact form message via email (public)")
     @SecurityRequirements
     public ResponseEntity<Void> sendMessage(@Valid @RequestBody ContactRequest request) {
         contactService.sendContactMessage(request);

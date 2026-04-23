@@ -27,7 +27,7 @@ public class FaqController {
     private final FaqService faqService;
 
     @GetMapping
-    @Operation(summary = "Get all FAQs", description = "Returns all FAQs sorted by display order")
+    @Operation(operationId = "getAllFaqs", summary = "Get all FAQs", description = "Returns all FAQs sorted by display order")
     @SecurityRequirements
     public List<FaqResponse> getAll() {
         return faqService.findAll().stream()
@@ -36,14 +36,14 @@ public class FaqController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get FAQ by ID", description = "Returns a single FAQ by its ID")
+    @Operation(operationId = "getFaqById", summary = "Get FAQ by ID", description = "Returns a single FAQ by its ID")
     @SecurityRequirements
     public FaqResponse getById(@PathVariable UUID id) {
         return FaqResponse.from(faqService.findById(id));
     }
 
     @PostMapping
-    @Operation(summary = "Create FAQ", description = "Create a new FAQ entry (requires authentication)")
+    @Operation(operationId = "createFaq", summary = "Create FAQ", description = "Create a new FAQ entry (requires authentication)")
     public ResponseEntity<FaqResponse> create(@Valid @RequestBody FaqRequest request) {
         Faq created = faqService.create(request);
         FaqResponse response = FaqResponse.from(created);
@@ -51,20 +51,20 @@ public class FaqController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update FAQ", description = "Update an existing FAQ entry (requires authentication)")
+    @Operation(operationId = "updateFaq", summary = "Update FAQ", description = "Update an existing FAQ entry (requires authentication)")
     public FaqResponse update(@PathVariable UUID id, @Valid @RequestBody FaqRequest request) {
         return FaqResponse.from(faqService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete FAQ", description = "Delete a FAQ entry (requires authentication)")
+    @Operation(operationId = "deleteFaq", summary = "Delete FAQ", description = "Delete a FAQ entry (requires authentication)")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         faqService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/reorder")
-    @Operation(summary = "Reorder FAQs", description = "Reorder FAQs by providing a list of IDs in the desired order (requires authentication)")
+    @Operation(operationId = "reorderFaqs", summary = "Reorder FAQs", description = "Reorder FAQs by providing a list of IDs in the desired order (requires authentication)")
     public List<FaqResponse> reorder(@RequestBody List<UUID> orderedIds) {
         return faqService.reorder(orderedIds).stream()
                 .map(FaqResponse::from)

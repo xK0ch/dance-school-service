@@ -28,7 +28,7 @@ public class CourseCategoryController {
     private final CourseCategoryService courseCategoryService;
 
     @GetMapping
-    @Operation(summary = "Get course categories", description = "Returns course categories with their courses, sorted by display order. Optionally filter by category IDs.")
+    @Operation(operationId = "getAllCourseCategories", summary = "Get course categories", description = "Returns course categories with their courses, sorted by display order. Optionally filter by category IDs.")
     @SecurityRequirements
     public List<CourseCategoryResponse> getAll(@RequestParam(required = false) List<UUID> ids) {
         if (ids != null && !ids.isEmpty()) {
@@ -38,34 +38,34 @@ public class CourseCategoryController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get course category by ID", description = "Returns a single course category with its courses")
+    @Operation(operationId = "getCourseCategoryById", summary = "Get course category by ID", description = "Returns a single course category with its courses")
     @SecurityRequirements
     public CourseCategoryResponse getById(@PathVariable UUID id) {
         return courseCategoryService.findById(id);
     }
 
     @PostMapping
-    @Operation(summary = "Create course category", description = "Create a new course category (requires authentication)")
+    @Operation(operationId = "createCourseCategory", summary = "Create course category", description = "Create a new course category (requires authentication)")
     public ResponseEntity<CourseCategoryResponse> create(@Valid @RequestBody CourseCategoryRequest request) {
         CourseCategoryResponse response = courseCategoryService.create(request);
         return ResponseEntity.created(URI.create("/api/course-categories/" + response.id())).body(response);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update course category", description = "Update an existing course category (requires authentication)")
+    @Operation(operationId = "updateCourseCategory", summary = "Update course category", description = "Update an existing course category (requires authentication)")
     public CourseCategoryResponse update(@PathVariable UUID id, @Valid @RequestBody CourseCategoryRequest request) {
         return courseCategoryService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete course category", description = "Delete a course category (requires authentication)")
+    @Operation(operationId = "deleteCourseCategory", summary = "Delete course category", description = "Delete a course category (requires authentication)")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         courseCategoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/reorder")
-    @Operation(summary = "Reorder course categories", description = "Reorder categories by providing a list of IDs in the desired order (requires authentication)")
+    @Operation(operationId = "reorderCourseCategories", summary = "Reorder course categories", description = "Reorder categories by providing a list of IDs in the desired order (requires authentication)")
     public List<CourseCategoryResponse> reorder(@RequestBody List<UUID> orderedIds) {
         return courseCategoryService.reorder(orderedIds);
     }

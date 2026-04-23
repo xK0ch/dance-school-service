@@ -24,7 +24,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
-    @Operation(summary = "Login", description = "Authenticate with username and password to receive a JWT token")
+    @Operation(operationId = "login", summary = "Login", description = "Authenticate with username and password to receive a JWT token")
     @SecurityRequirements
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
         AdminUser user = adminUserRepository.findByUsername(request.username())
