@@ -37,7 +37,7 @@ public class Event extends BaseEntity {
     private String remark;
 
     @OneToMany(mappedBy = "event")
-    @OrderBy("startTime ASC")
+    @OrderBy("createdAt ASC")
     @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
     private List<EventTimeRange> timeRanges = new ArrayList<>();
 
