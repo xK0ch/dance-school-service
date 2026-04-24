@@ -9,7 +9,7 @@ COPY src ./src
 RUN gradle bootJar --no-daemon
 
 # Stage 2: Run
-FROM amazoncorretto:25.0.2-alpine
+FROM amazoncorretto:25.0.3-alpine
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080

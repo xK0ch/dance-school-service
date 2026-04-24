@@ -1,6 +1,12 @@
 pipeline {
   agent any
 
+  options {
+    disableConcurrentBuilds()
+    timestamps()
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+  }
+
   environment {
     DB_PASSWORD = credentials('TANZSCHULE_DB_PASSWORD')
     JWT_SECRET = credentials('TANZSCHULE_JWT_SECRET')
@@ -16,10 +22,14 @@ pipeline {
   stages {
     stage('Deploy') {
       steps {
-        sh 'docker compose -f docker-compose-tanzschule-family-and-friends-service.yml down'
-        sh 'docker image prune -af'
-        sh 'docker compose -f docker-compose-tanzschule-family-and-friends-service.yml up --build -d'
+        sh 'docker compose -f docker-compose-tanzschule-family-and-friends-service.yml up --build -d --remove-orphans'
       }
+    }
+  }
+
+  post {
+    always {
+      sh 'docker image prune -f'
     }
   }
 }
