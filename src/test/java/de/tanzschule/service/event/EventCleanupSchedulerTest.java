@@ -31,7 +31,7 @@ class EventCleanupSchedulerTest {
     @Mock
     private EventCleanupConfigService configService;
 
-    // Fixed at 2026-05-10; first day of current month is 2026-05-01
+    // Fixed at 2026-05-10; cutoff for cleanup is "today" (2026-05-10)
     private final Clock clock = Clock.fixed(
             Instant.parse("2026-05-10T12:00:00Z"),
             ZoneId.of("UTC")
@@ -58,16 +58,16 @@ class EventCleanupSchedulerTest {
     void cleanup_whenEnabled_deletesPastEvents() {
         when(configService.isEnabled()).thenReturn(true);
 
-        Event april1 = stubEvent(LocalDate.of(2026, 4, 15));
-        Event april2 = stubEvent(LocalDate.of(2026, 4, 30));
-        when(eventRepository.findAllByDateBefore(eq(LocalDate.of(2026, 5, 1))))
-                .thenReturn(List.of(april1, april2));
+        Event yesterday = stubEvent(LocalDate.of(2026, 5, 9));
+        Event lastMonth = stubEvent(LocalDate.of(2026, 4, 30));
+        when(eventRepository.findAllByDateBefore(eq(LocalDate.of(2026, 5, 10))))
+                .thenReturn(List.of(yesterday, lastMonth));
 
         scheduler.cleanupPastEvents();
 
         verify(eventTimeRangeRepository, times(2)).deleteAllByEventId(org.mockito.ArgumentMatchers.any(UUID.class));
-        verify(eventRepository).delete(april1);
-        verify(eventRepository).delete(april2);
+        verify(eventRepository).delete(yesterday);
+        verify(eventRepository).delete(lastMonth);
     }
 
     @Test

@@ -22,8 +22,7 @@ public class EventCleanupScheduler {
 
     /**
      * Runs daily at 03:00 server time. Deletes every event whose date is before
-     * the first day of the current month, so last month's events disappear as
-     * soon as the new month starts.
+     * today, so past events disappear from the public listing the very next day.
      */
     @Scheduled(cron = "0 0 3 * * *")
     @Transactional
@@ -33,11 +32,11 @@ public class EventCleanupScheduler {
             return;
         }
 
-        LocalDate firstOfThisMonth = LocalDate.now(clock).withDayOfMonth(1);
-        List<Event> toDelete = eventRepository.findAllByDateBefore(firstOfThisMonth);
+        LocalDate today = LocalDate.now(clock);
+        List<Event> toDelete = eventRepository.findAllByDateBefore(today);
 
         if (toDelete.isEmpty()) {
-            log.info("Event cleanup: nothing to delete (cutoff: {}).", firstOfThisMonth);
+            log.info("Event cleanup: nothing to delete (cutoff: {}).", today);
             return;
         }
 
@@ -47,6 +46,6 @@ public class EventCleanupScheduler {
             eventRepository.delete(event);
         }
 
-        log.info("Event cleanup: deleted {} event(s) before {}.", toDelete.size(), firstOfThisMonth);
+        log.info("Event cleanup: deleted {} event(s) before {}.", toDelete.size(), today);
     }
 }
