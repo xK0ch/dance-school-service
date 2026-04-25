@@ -5,7 +5,7 @@ REST API backend for the Tanzschule Family & Friends web application.
 ## Tech Stack
 
 - **Java 25**
-- **Spring Boot 4.0.5**
+- **Spring Boot 4**
 - **Gradle 9.4.1** (Groovy DSL)
 - **PostgreSQL 18** with **Flyway** migrations (UUIDv7 primary keys via `uuidv7()`)
 - **Spring Security** with JWT authentication

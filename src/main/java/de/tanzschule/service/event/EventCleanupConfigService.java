@@ -1,7 +1,10 @@
 package de.tanzschule.service.event;
 
+import de.tanzschule.service.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,12 +16,12 @@ public class EventCleanupConfigService {
 
     @Transactional(readOnly = true)
     public EventCleanupConfigResponse getConfig() {
-        return EventCleanupConfigResponse.from(loadOrSeed());
+        return EventCleanupConfigResponse.from(load());
     }
 
     @Transactional
     public EventCleanupConfigResponse updateConfig(EventCleanupConfigRequest request) {
-        EventCleanupConfig config = loadOrSeed();
+        EventCleanupConfig config = load();
         config.setEnabled(Boolean.TRUE.equals(request.enabled()));
         config.setUpdatedAt(LocalDateTime.now());
         return EventCleanupConfigResponse.from(repository.save(config));
@@ -32,9 +35,24 @@ public class EventCleanupConfigService {
                 .orElse(true);
     }
 
-    private EventCleanupConfig loadOrSeed() {
+    private EventCleanupConfig load() {
         return repository.findAll().stream()
                 .findFirst()
-                .orElseGet(() -> repository.save(new EventCleanupConfig(true)));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Event cleanup config row not found — should have been seeded at startup"));
+    }
+
+    /**
+     * Ensures a single config row exists after Flyway migrations have run.
+     * Without this, the first GET request would have to insert a row, which
+     * would fail because GET runs inside a read-only transaction.
+     */
+    @Bean
+    public CommandLineRunner seedEventCleanupConfig(EventCleanupConfigRepository repository) {
+        return args -> {
+            if (repository.count() == 0) {
+                repository.save(new EventCleanupConfig(true));
+            }
+        };
     }
 }
