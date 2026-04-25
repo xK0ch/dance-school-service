@@ -1,5 +1,5 @@
 CREATE TABLE news (
-    id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+    id            UUID         PRIMARY KEY DEFAULT uuidv7(),
     title         VARCHAR(255) NOT NULL,
     description   TEXT         NOT NULL,
     display_order INTEGER      NOT NULL DEFAULT 0,

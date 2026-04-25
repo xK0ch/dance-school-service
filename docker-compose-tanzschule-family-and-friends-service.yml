@@ -1,6 +1,6 @@
 services:
   tanzschule-db:
-    image: postgres:17-alpine
+    image: postgres:18.3-alpine
     container_name: tanzschule-db
     environment:
       POSTGRES_DB: tanzschule

@@ -1,5 +1,5 @@
 CREATE TABLE course (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     name VARCHAR(255) NOT NULL,
     start_date DATE NOT NULL,
     start_time TIME NOT NULL,

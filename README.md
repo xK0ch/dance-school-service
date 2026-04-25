@@ -7,7 +7,7 @@ REST API backend for the Tanzschule Family & Friends web application.
 - **Java 25**
 - **Spring Boot 4.0.5**
 - **Gradle 9.4.1** (Groovy DSL)
-- **PostgreSQL 17** with **Flyway** migrations
+- **PostgreSQL 18** with **Flyway** migrations (UUIDv7 primary keys via `uuidv7()`)
 - **Spring Security** with JWT authentication
 - **JUnit 5** with **Testcontainers** for integration tests
 
@@ -16,14 +16,14 @@ REST API backend for the Tanzschule Family & Friends web application.
 ### Prerequisites
 
 - Java 25 (e.g. [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/what-is-corretto-25.html))
-- PostgreSQL 17
+- PostgreSQL 18 (UUIDv7 support is required)
 - Docker (for integration tests via Testcontainers)
 
 ### Local Development
 
 1. Start a local PostgreSQL instance via Docker:
    ```bash
-   docker run --rm -d --name tanzschule-db -p 5432:5432 -e POSTGRES_DB=tanzschule -e POSTGRES_USER=tanzschule -e POSTGRES_PASSWORD=tanzschule postgres:17-alpine
+   docker run --rm -d --name tanzschule-db -p 5432:5432 -e POSTGRES_DB=tanzschule -e POSTGRES_USER=tanzschule -e POSTGRES_PASSWORD=tanzschule postgres:18.3-alpine
    ```
 
 2. Run the application:
@@ -83,7 +83,7 @@ REST API backend for the Tanzschule Family & Friends web application.
 
 **Reorder Request:**
 ```json
-[3, 1, 2]
+["c3d4e5f6-...", "a1b2c3d4-...", "b2c3d4e5-..."]
 ```
 
 ### Gallery Events
@@ -111,18 +111,18 @@ REST API backend for the Tanzschule Family & Friends web application.
 **Gallery Event Response:**
 ```json
 {
-  "id": 1,
+  "id": "a1b2c3d4-...",
   "name": "Summer Dance Party",
   "date": "2026-07-15",
   "images": [
     {
-      "id": 1,
-      "filename": "a1b2c3d4-...-e5f6.jpg",
+      "id": "b2c3d4e5-...",
+      "filename": "f9e8d7c6-...-1234.jpg",
       "originalFilename": "my-photo.jpg",
       "contentType": "image/jpeg",
       "fileSize": 204800,
       "displayOrder": 0,
-      "galleryEventId": 1,
+      "galleryEventId": "a1b2c3d4-...",
       "createdAt": "2026-03-28T12:00:00",
       "updatedAt": "2026-03-28T12:00:00"
     }
@@ -134,7 +134,7 @@ REST API backend for the Tanzschule Family & Friends web application.
 
 **Upload Request (multipart/form-data):**
 ```
-POST /api/gallery-events/1/images
+POST /api/gallery-events/{id}/images
 Content-Type: multipart/form-data
 
 file: <image file (JPEG, PNG, GIF, WebP)>
@@ -142,7 +142,7 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 
 **Reorder Request:**
 ```json
-[3, 1, 2]
+["c3d4e5f6-...", "a1b2c3d4-...", "b2c3d4e5-..."]
 ```
 
 ### Course Categories
@@ -167,12 +167,12 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 **Course Category Response:**
 ```json
 {
-  "id": 1,
+  "id": "a1b2c3d4-...",
   "name": "Erwachsene",
   "displayOrder": 0,
   "courses": [
     {
-      "id": 1,
+      "id": "b2c3d4e5-...",
       "name": "Welttanzprogramm Teil 1",
       "startDate": "2026-05-01",
       "startTime": "19:45:00",
@@ -181,10 +181,10 @@ file: <image file (JPEG, PNG, GIF, WebP)>
       "teacher": "Uwe Höftmann",
       "remark": "Anfängerkurs für Paare",
       "partnerOption": true,
-      "categoryId": 1,
+      "categoryId": "a1b2c3d4-...",
       "tariffs": [
-        { "id": 1, "name": "Normal", "price": 78.00, "courseId": 1, "createdAt": "...", "updatedAt": "..." },
-        { "id": 2, "name": "Wiederholer", "price": 65.00, "courseId": 1, "createdAt": "...", "updatedAt": "..." }
+        { "id": "c3d4e5f6-...", "name": "Normal", "price": 78.00, "courseId": "b2c3d4e5-...", "createdAt": "...", "updatedAt": "..." },
+        { "id": "d4e5f6a7-...", "name": "Wiederholer", "price": 65.00, "courseId": "b2c3d4e5-...", "createdAt": "...", "updatedAt": "..." }
       ],
       "createdAt": "2026-04-06T12:00:00",
       "updatedAt": "2026-04-06T12:00:00"
@@ -197,7 +197,7 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 
 **Reorder Request:**
 ```json
-[3, 1, 2]
+["c3d4e5f6-...", "a1b2c3d4-...", "b2c3d4e5-..."]
 ```
 
 ### Courses
@@ -220,7 +220,7 @@ file: <image file (JPEG, PNG, GIF, WebP)>
   "teacher": "Uwe Höftmann",
   "remark": "Anfängerkurs für Paare",
   "partnerOption": true,
-  "categoryId": 1,
+  "categoryId": "a1b2c3d4-...",
   "tariffs": [
     { "name": "Normal", "price": 78.00 },
     { "name": "Wiederholer", "price": 65.00 }
@@ -230,14 +230,13 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 
 ### Events
 
-| Method | Endpoint              | Auth     | Description                                  |
-|--------|-----------------------|----------|----------------------------------------------|
-| GET    | `/api/events`         | Public   | Get all events (sorted by date, display order) |
-| GET    | `/api/events/{id}`    | Public   | Get event by ID with its time ranges         |
+| Method | Endpoint              | Auth     | Description                                    |
+|--------|-----------------------|----------|------------------------------------------------|
+| GET    | `/api/events`         | Public   | Get all events (sorted ascending by date)      |
+| GET    | `/api/events/{id}`    | Public   | Get event by ID with its time ranges           |
 | POST   | `/api/events`         | Required | Create a new event (with optional time ranges) |
-| PUT    | `/api/events/{id}`    | Required | Update an event (replaces time ranges)       |
-| DELETE | `/api/events/{id}`    | Required | Delete an event and all its time ranges      |
-| PUT    | `/api/events/reorder` | Required | Reorder events by list of IDs                |
+| PUT    | `/api/events/{id}`    | Required | Update an event (replaces time ranges)         |
+| DELETE | `/api/events/{id}`    | Required | Delete an event and all its time ranges        |
 
 **Event Request:**
 ```json
@@ -254,7 +253,7 @@ file: <image file (JPEG, PNG, GIF, WebP)>
 }
 ```
 
-Only `name` and `date` are required. `entryCost`, `entryCostWithCustomerCard`, `remark`, and the `timeRanges` list are all optional — an event can have zero, one, or several time ranges.
+Only `name` and `date` are required. `entryCost`, `entryCostWithCustomerCard`, `remark`, and the `timeRanges` list are all optional — an event can have zero, one, or several time ranges. Time ranges are returned in insertion order (sorted by `createdAt`), so the order in which they were sent in the request is preserved.
 
 **Event Response:**
 ```json
@@ -265,13 +264,35 @@ Only `name` and `date` are required. `entryCost`, `entryCostWithCustomerCard`, `
   "entryCost": 15.00,
   "entryCostWithCustomerCard": 10.00,
   "remark": "Dresscode: festlich",
-  "displayOrder": 0,
   "timeRanges": [
     { "id": "b2c3d4e5-...", "startTime": "18:00:00", "endTime": "20:00:00", "eventId": "a1b2c3d4-...", "createdAt": "...", "updatedAt": "..." },
     { "id": "c3d4e5f6-...", "startTime": "21:00:00", "endTime": "23:59:00", "eventId": "a1b2c3d4-...", "createdAt": "...", "updatedAt": "..." }
   ],
   "createdAt": "2026-04-22T12:00:00",
   "updatedAt": "2026-04-22T12:00:00"
+}
+```
+
+### Event Cleanup Config
+
+A scheduled job runs daily at 03:00 (server time) and deletes all events whose `date` lies before the first day of the current month. The job can be enabled or disabled at runtime via this endpoint — by default cleanup is enabled.
+
+| Method | Endpoint                       | Auth     | Description                                                |
+|--------|--------------------------------|----------|------------------------------------------------------------|
+| GET    | `/api/event-cleanup-config`    | Required | Returns whether the automatic cleanup is enabled           |
+| PUT    | `/api/event-cleanup-config`    | Required | Enable or disable the automatic cleanup of past events     |
+
+**Request:**
+```json
+{
+  "enabled": false
+}
+```
+
+**Response:**
+```json
+{
+  "enabled": false
 }
 ```
 
@@ -496,6 +517,13 @@ src/main/java/de/tanzschule/service/
 │   └── ImageResponse.java
 ├── event/
 │   ├── Event.java
+│   ├── EventCleanupConfig.java
+│   ├── EventCleanupConfigController.java
+│   ├── EventCleanupConfigRepository.java
+│   ├── EventCleanupConfigRequest.java
+│   ├── EventCleanupConfigResponse.java
+│   ├── EventCleanupConfigService.java
+│   ├── EventCleanupScheduler.java
 │   ├── EventController.java
 │   ├── EventRepository.java
 │   ├── EventRequest.java
@@ -540,7 +568,7 @@ src/main/java/de/tanzschule/service/
 
 ## Database Migrations
 
-Flyway migrations are located in `src/main/resources/db/migration/`:
+Flyway migrations are located in `src/main/resources/db/migration/`. All primary key columns use `UUID PRIMARY KEY DEFAULT uuidv7()` — IDs are generated by PostgreSQL on `INSERT` (UUIDv7, time-ordered, requires PostgreSQL 18+) and read back by Hibernate via `INSERT ... RETURNING id`.
 
 | Migration | Description |
 |-----------|-------------|
@@ -552,5 +580,6 @@ Flyway migrations are located in `src/main/resources/db/migration/`:
 | `V6__create_course_category_table.sql` | Course category table |
 | `V7__create_course_table.sql` | Course table with FK to course_category |
 | `V8__create_course_tariff_table.sql` | Course tariff table with FK to course |
-| `V9__create_event_table.sql` | Event table (name, date, optional entry costs, remark, display order) |
+| `V9__create_event_table.sql` | Event table (name, date, optional entry costs, remark) — events are sorted by date only, no `display_order` |
 | `V10__create_event_time_range_table.sql` | Event time range table with FK to event (multiple per event) |
+| `V11__create_event_cleanup_config_table.sql` | Single-row config table for the daily event cleanup scheduler |

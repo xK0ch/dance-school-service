@@ -1,5 +1,5 @@
 CREATE TABLE course_tariff (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     name VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     course_id UUID NOT NULL REFERENCES course(id),
