@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: tanzschule
       POSTGRES_PASSWORD: ${DB_PASSWORD:-tanzschule}
     volumes:
-      - tanzschule-db-data:/var/lib/postgresql/data
+      - tanzschule-db-data:/var/lib/postgresql
     networks:
       - tanzschule-net
     restart: unless-stopped
