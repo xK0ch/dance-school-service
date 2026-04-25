@@ -4,3 +4,5 @@ CREATE TABLE event_cleanup_config (
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
+
+INSERT INTO event_cleanup_config DEFAULT VALUES;

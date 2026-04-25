@@ -37,30 +37,12 @@ class EventCleanupConfigServiceTest {
 
     @Test
     void getConfig_whenMissing_throwsResourceNotFound() {
-        // Row is seeded at startup (CommandLineRunner). If it ever goes missing,
-        // we surface a 404 instead of silently inserting from a read-only transaction.
+        // The single config row is seeded by Flyway migration V11. If it ever goes
+        // missing, we surface a 404 instead of silently inserting from a read-only transaction.
         when(repository.findAll()).thenReturn(List.of());
 
         assertThatThrownBy(() -> service.getConfig())
                 .isInstanceOf(ResourceNotFoundException.class);
-    }
-
-    @Test
-    void seedEventCleanupConfig_seedsRowIfTableEmpty() throws Exception {
-        when(repository.count()).thenReturn(0L);
-
-        service.seedEventCleanupConfig(repository).run();
-
-        verify(repository).save(any(EventCleanupConfig.class));
-    }
-
-    @Test
-    void seedEventCleanupConfig_doesNothingIfRowExists() throws Exception {
-        when(repository.count()).thenReturn(1L);
-
-        service.seedEventCleanupConfig(repository).run();
-
-        verify(repository, org.mockito.Mockito.never()).save(any(EventCleanupConfig.class));
     }
 
     @Test

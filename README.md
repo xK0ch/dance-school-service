@@ -582,4 +582,4 @@ Flyway migrations are located in `src/main/resources/db/migration/`. All primary
 | `V8__create_course_tariff_table.sql` | Course tariff table with FK to course |
 | `V9__create_event_table.sql` | Event table (name, date, optional entry costs, remark) — events are sorted by date only, no `display_order` |
 | `V10__create_event_time_range_table.sql` | Event time range table with FK to event (multiple per event) |
-| `V11__create_event_cleanup_config_table.sql` | Single-row config table for the daily event cleanup scheduler |
+| `V11__create_event_cleanup_config_table.sql` | Single-row config table for the daily event cleanup scheduler (row is seeded by the migration itself, defaults to `enabled = TRUE`) |
