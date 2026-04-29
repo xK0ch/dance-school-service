@@ -6,4 +6,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'tanzschule-family-and-friends-service'
+rootProject.name = 'dance-school-service'

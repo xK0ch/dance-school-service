@@ -1,24 +1,24 @@
 services:
-  tanzschule-db:
+  dance-school-db:
     image: postgres:18.3-alpine
-    container_name: tanzschule-db
+    container_name: dance-school-db
     environment:
-      POSTGRES_DB: tanzschule
-      POSTGRES_USER: tanzschule
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-tanzschule}
+      POSTGRES_DB: dance_school
+      POSTGRES_USER: dance_school
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-dance_school}
     volumes:
-      - tanzschule-db-data:/var/lib/postgresql
+      - dance-school-db-data:/var/lib/postgresql
     networks:
-      - tanzschule-net
+      - dance-school-net
     restart: unless-stopped
 
-  tanzschule-service:
+  dance-school-service:
     build: .
-    container_name: tanzschule-service
+    container_name: dance-school-service
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://tanzschule-db:5432/tanzschule
-      SPRING_DATASOURCE_USERNAME: tanzschule
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-tanzschule}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://dance-school-db:5432/dance_school
+      SPRING_DATASOURCE_USERNAME: dance_school
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-dance_school}
       JWT_SECRET: ${JWT_SECRET:-my-super-secret-jwt-key-that-should-be-changed-in-production-and-be-at-least-256-bits}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin}
@@ -28,18 +28,18 @@ services:
       MAIL_USERNAME: ${MAIL_USERNAME:-noreply@example.com}
       MAIL_PASSWORD: ${MAIL_PASSWORD:-changeme}
       CONTACT_RECIPIENT: ${CONTACT_RECIPIENT:-mail@fynn-koch.de}
-      CORS_ALLOWED_ORIGINS: https://tanzschule.fynn-koch.de,http://localhost:4200
+      CORS_ALLOWED_ORIGINS: https://dance-school.fynn-koch.de,http://localhost:4200
     volumes:
       - ${GALLERY_UPLOAD_DIR:-./uploads/gallery}:${GALLERY_UPLOAD_DIR:-./uploads/gallery}
     depends_on:
-      - tanzschule-db
+      - dance-school-db
     networks:
-      - tanzschule-net
+      - dance-school-net
     restart: unless-stopped
 
 volumes:
-  tanzschule-db-data:
+  dance-school-db-data:
 
 networks:
-  tanzschule-net:
-    name: tanzschule-net
+  dance-school-net:
+    name: dance-school-net

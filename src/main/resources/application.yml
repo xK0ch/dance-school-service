@@ -1,11 +1,11 @@
 spring:
   application:
-    name: tanzschule-family-and-friends-service
+    name: dance-school-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/tanzschule
-    username: tanzschule
-    password: tanzschule
+    url: jdbc:postgresql://localhost:5432/dance_school
+    username: dance_school
+    password: dance_school
     driver-class-name: org.postgresql.Driver
 
   jpa:

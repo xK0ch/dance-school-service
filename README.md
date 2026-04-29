@@ -1,6 +1,6 @@
-# Tanzschule Family & Friends – Backend Service
+# Dance School (Backend Service)
 
-REST API backend for the Tanzschule Family & Friends web application.
+REST API backend for a fictional dance school. Originally built as a custom client project for "Tanzschule Family & Friends" in Neumünster, kept as a portfolio piece after the customer's existing site turned out to cover all needs. The mockup business name is preserved on purpose; the Java package stays `de.tanzschule.*` to avoid mass-renaming the source tree.
 
 ## Tech Stack
 
@@ -23,7 +23,7 @@ REST API backend for the Tanzschule Family & Friends web application.
 
 1. Start a local PostgreSQL instance via Docker:
    ```bash
-   docker run --rm -d --name tanzschule-db -p 5432:5432 -e POSTGRES_DB=tanzschule -e POSTGRES_USER=tanzschule -e POSTGRES_PASSWORD=tanzschule postgres:18.3-alpine
+   docker run --rm -d --name dance-school-db -p 5432:5432 -e POSTGRES_DB=dance_school -e POSTGRES_USER=dance_school -e POSTGRES_PASSWORD=dance_school postgres:18.3-alpine
    ```
 
 2. Run the application:
@@ -416,23 +416,23 @@ pipeline {
   agent any
 
   environment {
-    DB_PASSWORD = credentials('TANZSCHULE_DB_PASSWORD')
-    JWT_SECRET = credentials('TANZSCHULE_JWT_SECRET')
-    ADMIN_USERNAME = credentials('TANZSCHULE_ADMIN_USERNAME')
-    ADMIN_PASSWORD = credentials('TANZSCHULE_ADMIN_PASSWORD')
-    GALLERY_UPLOAD_DIR = '/srv/tanzschule/uploads/images'
-    MAIL_HOST = credentials('TANZSCHULE_MAIL_HOST')
-    MAIL_PORT = credentials('TANZSCHULE_MAIL_PORT')
-    MAIL_USERNAME = credentials('TANZSCHULE_MAIL_USERNAME')
-    MAIL_PASSWORD = credentials('TANZSCHULE_MAIL_PASSWORD')
+    DB_PASSWORD = credentials('DANCE_SCHOOL_DB_PASSWORD')
+    JWT_SECRET = credentials('DANCE_SCHOOL_JWT_SECRET')
+    ADMIN_USERNAME = credentials('DANCE_SCHOOL_ADMIN_USERNAME')
+    ADMIN_PASSWORD = credentials('DANCE_SCHOOL_ADMIN_PASSWORD')
+    GALLERY_UPLOAD_DIR = '/srv/dance-school/uploads/images'
+    MAIL_HOST = credentials('DANCE_SCHOOL_MAIL_HOST')
+    MAIL_PORT = credentials('DANCE_SCHOOL_MAIL_PORT')
+    MAIL_USERNAME = credentials('DANCE_SCHOOL_MAIL_USERNAME')
+    MAIL_PASSWORD = credentials('DANCE_SCHOOL_MAIL_PASSWORD')
   }
 
   stages {
     stage('Deploy') {
       steps {
-        sh 'docker compose -f docker-compose-tanzschule-family-and-friends-service.yml down'
+        sh 'docker compose -f docker-compose-dance-school-service.yml down'
         sh 'docker image prune -af'
-        sh 'docker compose -f docker-compose-tanzschule-family-and-friends-service.yml up --build -d'
+        sh 'docker compose -f docker-compose-dance-school-service.yml up --build -d'
       }
     }
   }
@@ -445,14 +445,14 @@ Under **Manage Jenkins > Credentials > Global**, create the following credential
 
 | Credential ID                    | Description                               | Example Value                          |
 |----------------------------------|-------------------------------------------|----------------------------------------|
-| `TANZSCHULE_DB_PASSWORD`         | PostgreSQL password                       | `my-secure-db-password`                |
-| `TANZSCHULE_JWT_SECRET`          | JWT signing secret (min. 32 characters)   | `a3f8b2...` (long random string)       |
-| `TANZSCHULE_ADMIN_USERNAME`      | Admin username                            | `admin`                                |
-| `TANZSCHULE_ADMIN_PASSWORD`      | Admin password                            | `my-secure-admin-password`             |
-| `TANZSCHULE_MAIL_HOST`           | SMTP server hostname                      | `smtp.example.com`                     |
-| `TANZSCHULE_MAIL_PORT`           | SMTP server port                          | `587`                                  |
-| `TANZSCHULE_MAIL_USERNAME`       | SMTP username / sender address            | `noreply@tsfaf.de`                     |
-| `TANZSCHULE_MAIL_PASSWORD`       | SMTP password                             | `my-mail-password`                     |
+| `DANCE_SCHOOL_DB_PASSWORD`       | PostgreSQL password                       | `my-secure-db-password`                |
+| `DANCE_SCHOOL_JWT_SECRET`        | JWT signing secret (min. 32 characters)   | `a3f8b2...` (long random string)       |
+| `DANCE_SCHOOL_ADMIN_USERNAME`    | Admin username                            | `admin`                                |
+| `DANCE_SCHOOL_ADMIN_PASSWORD`    | Admin password                            | `my-secure-admin-password`             |
+| `DANCE_SCHOOL_MAIL_HOST`         | SMTP server hostname                      | `smtp.example.com`                     |
+| `DANCE_SCHOOL_MAIL_PORT`         | SMTP server port                          | `587`                                  |
+| `DANCE_SCHOOL_MAIL_USERNAME`     | SMTP username / sender address            | `noreply@example.com`                  |
+| `DANCE_SCHOOL_MAIL_PASSWORD`     | SMTP password                             | `my-mail-password`                     |
 
 `GALLERY_UPLOAD_DIR` is set directly in the Jenkinsfile as it is not a secret.
 
@@ -462,9 +462,9 @@ Configuration is done via `application.yml` and can be overridden with environme
 
 | Environment Variable         | Default                                       | Description                          |
 |------------------------------|-----------------------------------------------|--------------------------------------|
-| `SPRING_DATASOURCE_URL`     | `jdbc:postgresql://localhost:5432/tanzschule` | Database URL          |
-| `SPRING_DATASOURCE_USERNAME`| `tanzschule`                                  | Database user                        |
-| `SPRING_DATASOURCE_PASSWORD`| `tanzschule`                                  | Database password                    |
+| `SPRING_DATASOURCE_URL`     | `jdbc:postgresql://localhost:5432/dance_school` | Database URL                       |
+| `SPRING_DATASOURCE_USERNAME`| `dance_school`                                  | Database user                      |
+| `SPRING_DATASOURCE_PASSWORD`| `dance_school`                                  | Database password                  |
 | `JWT_SECRET`                 | *(dev default)*                               | JWT signing secret (min. 256 bits)   |
 | `JWT_EXPIRATION`             | `86400000`                                    | Token expiration in ms (default: 24h)|
 | `ADMIN_USERNAME`             | `admin`                                       | Default admin username               |
