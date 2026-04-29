@@ -1,12 +1,12 @@
 # Dance School (Backend Service)
 
-REST API backend for a fictional dance school. Originally built as a custom client project for "Tanzschule Family & Friends" in Neumünster, kept as a portfolio piece after the customer's existing site turned out to cover all needs. The mockup business name is preserved on purpose; the Java package stays `de.tanzschule.*` to avoid mass-renaming the source tree.
+REST API backend for a fictional dance school. Originally built as a custom client project for "Tanzschule Family & Friends", kept as a portfolio piece after the customer's existing site turned out to cover all needs. The mockup business name is preserved on purpose.
 
 ## Tech Stack
 
 - **Java 25**
 - **Spring Boot 4**
-- **Gradle 9.4.1** (Groovy DSL)
+- **Gradle 9.5.0** (Groovy DSL)
 - **PostgreSQL 18** with **Flyway** migrations (UUIDv7 primary keys via `uuidv7()`)
 - **Spring Security** with JWT authentication
 - **JUnit 5** with **Testcontainers** for integration tests
