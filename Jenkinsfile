@@ -13,10 +13,10 @@ pipeline {
     ADMIN_USERNAME = credentials('DANCE_SCHOOL_ADMIN_USERNAME')
     ADMIN_PASSWORD = credentials('DANCE_SCHOOL_ADMIN_PASSWORD')
     GALLERY_UPLOAD_DIR = '/srv/dance-school/uploads/images'
-    MAIL_HOST = credentials('DANCE_SCHOOL_MAIL_HOST')
-    MAIL_PORT = credentials('DANCE_SCHOOL_MAIL_PORT')
-    MAIL_USERNAME = credentials('DANCE_SCHOOL_MAIL_USERNAME')
-    MAIL_PASSWORD = credentials('DANCE_SCHOOL_MAIL_PASSWORD')
+    MAIL_HOST = credentials('MAIL_HOST')
+    MAIL_PORT = credentials('MAIL_PORT')
+    MAIL_USERNAME = credentials('MAIL_USERNAME')
+    MAIL_PASSWORD = credentials('MAIL_PASSWORD')
   }
 
   stages {
