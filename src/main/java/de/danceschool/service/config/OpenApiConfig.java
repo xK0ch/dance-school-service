@@ -6,8 +6,11 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
@@ -17,6 +20,9 @@ public class OpenApiConfig {
         String securitySchemeName = "Bearer Authentication";
 
         return new OpenAPI()
+                // Relative server URL so Swagger UI's "Try it out" targets the
+                // page origin, not the http:// URL springdoc infers behind the proxy.
+                .servers(List.of(new Server().url("/")))
                 .info(new Info()
                         .title("Tanzschule Family & Friends API")
                         .description("REST API for the Tanzschule Family & Friends web application")
